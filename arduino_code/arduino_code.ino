@@ -26,7 +26,7 @@ float read_distance_sensor(int pin){
 
   //read multiple times and take average to reduce noise
 
-  return distance
+  return distance;
 }
 
 
