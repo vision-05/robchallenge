@@ -29,18 +29,21 @@ void QTR::setSensorPins(uint8_t* pins, uint8_t count) {
 			this->sensors[i] = pins[i];
 		}
 	}
+
+	this->readings = new uint32_t[this->count];
 	//undefined for reassignment so far
 }
 
 //try and find max and min values of reflectance based on trial period
 //calibrate either with ambient light or no light
-void QTR::calibrate(uint8_t times) {
+void QTR::calibrate(uint8_t times, Emitter e, Parity p) {
 	if(this->recalibrated == 0) {
 		this->calmax = new uint32_t[this->count];
 		this->calmin = new uint32_t[this->count];
+		this->em = e;
+		this->pa = p;
 	}
 
-	uint32_t* vals = new uint32_t[this->count];
 	uint32_t* curmin = new uint32_t[this->count];
 	uint32_t* curmax = new uint32_t[this->count];
 	
@@ -50,13 +53,13 @@ void QTR::calibrate(uint8_t times) {
 	}
 
 	for(int i = 0; i < times; ++i) {
-		this->readSensors(vals, this->count);
+		this->readSensors();
 		for(int j = 0; j < this->count; ++j) {
-			if(vals[j] < curmin[j]) {
-				curmin[j] = vals[j];
+			if(this->readings[j] < curmin[j]) {
+				curmin[j] = this->readings[j];
 			}
-			if(vals[j] > curmax[j]) {
-				curmax[j] = vals[j];
+			if(this->readings[j] > curmax[j]) {
+				curmax[j] = this->readings[j];
 			}
 		}
 	}
@@ -77,10 +80,11 @@ void QTR::calibrate(uint8_t times) {
 	
 }
 
-void QTR::readSensors(uint32_t* values, uint8_t len) {
-	uint8_t* readStatus = new uint8_t[len];
+void QTR::readSensors() {
+	this->switchEmittersOn(this->em, this->pa);
+	uint8_t* readStatus = new uint8_t[this->count];
 
-	for(int i = 0; i < len; ++i) {
+	for(int i = 0; i < this->count; ++i) {
 		readStatus[i] = 0;
 	}
 
@@ -110,28 +114,42 @@ void QTR::readSensors(uint32_t* values, uint8_t len) {
 			int val = digitalRead(this->sensors[i]);
 			timedelta = micros() - timestart;
 			if(val == LOW) {
-				values[i] = timedelta;
+				this->readings[i] = timedelta;
 				readStatus[i] = 1;
 			}
 		}
-	} while(this->sum(readStatus, len) < len && timedelta < this->maxtime);
+	} while(this->sum(readStatus, this->count) < this->count && timedelta < this->maxtime);
 	//100 microsecond max time for now
 	//interrupts();
 	delete[] readStatus;
+	this->switchEmittersOff(this->em, this->pa);
 }
 
-void QTR::readCalibrated(uint32_t* values, uint8_t len) {
-	this->readSensors(values, len);
-	for(int i = 0; i < len; ++i) {
+void QTR::readCalibrated() {
+	this->readSensors();
+	for(int i = 0; i < this->count; ++i) {
 		uint32_t invscale = this->calmax[i] - this->calmin[i];
-		values[i] = values[i]*100/invscale; //set to autocalibrate between 0 and 1024
+		this->readings[i] = this->readings[i]*100/invscale; //set to autocalibrate between 0 and 1024
 	}	
+}
+
+void QTR::readBlackLine() {
+	this->readCalibrated();
+	for(int i = 0; i < this->count; ++i) {
+		if(this->readings[i] > 250) {
+			this->readings[i] = 1;
+		}
+		else {
+			this->readings[i] = 0;
+		}
+	}
 }
 
 QTR::~QTR() {
 	delete[] this->calmin;
 	delete[] this->calmax;
-	delete[] this->sensors; //free memory
+	delete[] this->sensors;
+	delete[] this->readings;
 }
 
 uint32_t QTR::getCalMin(int index) {
@@ -140,4 +158,58 @@ uint32_t QTR::getCalMin(int index) {
 
 uint32_t QTR::getCalMax(int index) {
 	return this->calmax[index];
+}
+
+
+///Set the pin number of the even emitter control pin
+void QTR::setEvenEmitter(uint8_t pin) {
+	this->evenEmitter = pin;
+	pinMode(pin, OUTPUT);
+}
+
+///Set the pin number of the odd emitter control pin
+void QTR::setOddEmitter(uint8_t pin) {
+	this->oddEmitter = pin;
+	pinMode(pin, OUTPUT);
+}
+
+void QTR::emittersOn(Parity p) {
+	if(p == Parity::Even || p == Parity::EvenAndOdd) {
+		digitalWrite(this->evenEmitter, HIGH);
+	}
+	if(p == Parity::Odd || p == Parity::EvenAndOdd) {
+		digitalWrite(this->oddEmitter, HIGH);
+	}
+}
+
+void QTR::emittersOff(Parity p) {
+	if(p == Parity::Even || p == Parity::EvenAndOdd) {
+		digitalWrite(this->evenEmitter, LOW);
+	}
+	if(p == Parity::Odd || p == Parity::EvenAndOdd) {
+		digitalWrite(this->oddEmitter, LOW);
+	}
+}
+
+void QTR::switchEmittersOn(Emitter e, Parity p) {
+	switch(e) {
+		case Emitter::OnAndOff:
+		case Emitter::On:
+			this->emittersOn(p);
+			break;
+		case Emitter::Off:
+			this->emittersOff(p);
+			break;
+	}
+}
+
+void QTR::switchEmittersOff(Emitter e, Parity p) {
+	switch(e) {
+		case Emitter::Off:
+		case Emitter::OnAndOff:
+			this->emittersOff(p);
+			break;
+		case Emitter::On:
+			this->emittersOn(p);
+	}
 }

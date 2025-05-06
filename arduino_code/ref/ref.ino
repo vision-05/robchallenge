@@ -1,7 +1,6 @@
 #include <qtr.h>
 
 const int count = 9;
-uint16_t values[count];
 QTR qtr;
 
 void setup() {
@@ -17,7 +16,7 @@ void setup() {
   digitalWrite(LED_BUILTIN, HIGH);
 
   for(uint16_t i = 0; i < 20; i++) {
-    qtr.calibrate(10);
+    qtr.calibrate(10, Emitter::Off, Parity::EvenAndOdd);
     delay(1000);
   }
 
@@ -34,17 +33,21 @@ void setup() {
     Serial.print(' ');
   }
   Serial.println();
+
+  //qtr.setEvenEmitter(3);
+  //qtr.setOddEmitter(2);
+
+  //qtr.emitterTest();
 }
 
 void loop() {
-  uint32_t* values = new uint32_t[count];
-  qtr.readSensors(values,count);
-  qtr.readCalibrated(values,count);
+  qtr.readSensors();
+  qtr.readCalibrated();
+  qtr.readBlackLine();
   for(uint8_t i = 0; i < count; i++) {
-    Serial.print(values[i]);
+    Serial.print(qtr[i]);
     Serial.print(' ');
   }
   Serial.println();
-  delete[] values;
 
 }
