@@ -261,8 +261,8 @@ void setup(){
   // mdR.clearResetFlag();
   // Serial.println("Right Motoron Motor Driver Connected!");
 
-  // Serial.println("Attaching Servos!");
-  // sensor_servo.attach(2);
+  Serial.println("Attaching Servos!");
+  sensor_servo.attach(SERVO_PIN);
 
   Serial.println("Initialisation completed!");
 

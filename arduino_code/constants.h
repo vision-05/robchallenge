@@ -7,6 +7,8 @@
 #define FRONT_DISTANCE_PIN 6
 #define FLOOR_DISTANCE_PIN 7
 
+#define SERVO_PIN 9
+
 #define SECRET_SSID "yournetwork"
 #define SECRET_PASS "yourpassword"
 
