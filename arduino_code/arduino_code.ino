@@ -268,9 +268,12 @@ void setup(){
 
   delay(100);
   
+  //wait for start button
   while(!button_pressed){
     button_pressed = digitalRead(KILL_SWITCH);
   }
+
+  println("Starting main sequence")
 }
 
 void loop(){
@@ -293,7 +296,20 @@ void loop(){
   if (finished){
     section_idx++;
 
+    if (section_idx > sizeof(section_order) / sizeof(Section) -1){
+      section_idx = 0;
+      move(0,0);
+
+      //enter infinite loop when finished all sections
+      while (true){
+        println("Finished sequence!");
+        delay(1000);
+      }
+    }
+
     current_section = section_order[section_idx];
+
+    finished = false;
   }
 
   check_kill_switch();
