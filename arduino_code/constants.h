@@ -11,6 +11,13 @@
 
 #define SECRET_SSID "yournetwork"
 #define SECRET_PASS "yourpassword"
+#define PACKET_SIZE 48
+
+#define IR_MODEL 1080
+#define FRONT_IR_PIN A0
+#define LEFT_IR_PIN A1
+#define RIGHT_IR_PIN A2
+#define DOWN_IR_PIN A3
 
 enum Section{
     LINE_FOLLOW,

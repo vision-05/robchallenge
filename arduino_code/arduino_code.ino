@@ -4,6 +4,9 @@
 #include <SPI.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <SharpIR.h>
+
+
 
 #include "constants.h"
 
@@ -17,6 +20,12 @@ Servo sensor_servo;
 
 WiFiUDP Udp; //UDP to receive WiFi signal
 
+//infra-red distance sensor classes
+SharpIR frontIR(FRONT_IR_PIN, IR_MODEL);
+SharpIR leftIR(LEFT_IR_PIN, IR_MODEL);
+SharpIR rightIR(RIGHT_IR_PIN, IR_MODEL);
+SharpIR downIR(DOWN_IR_PIN, IR_MODEL);
+
 
 int left_speed = 0; //percentage for left speed -100% to 100%
 int right_speed = 0; //percentage for right speed -100% to 100%
@@ -28,18 +37,18 @@ int back_left_speed = 0;
 int back_right_speed = 0;
 
 //distance sensor distances
+float front_distance = 0.0f;
 float left_distance = 0.0f;
 float right_distance = 0.0f;
-float front_distance = 0.0f;
-float floor_distance = 0.0f;
+float down_distance = 0.0f;
 
 //WiFi variables
-char ssid[] = SECRET_SSID;        // your network SSID (name)
-char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
-int status = WL_IDLE_STATUS;     // the WiFi radio's status
+char ssid[] = SECRET_SSID; // your network SSID (name)
+char pass[] = SECRET_PASS; // your network password (use for WPA, or use as key for WEP)
+int status = WL_IDLE_STATUS; // the WiFi radio's status
 unsigned int localPort = 2390; // local port to listen for UDP packets
 
-const int PACKET_SIZE = 48;
+
 byte packetBuffer[PACKET_SIZE]; // buffer to hold incoming and outgoing packets
 
 
@@ -146,6 +155,22 @@ void move(int left, int right){
   // mdR.setSpeed(3, back_right_speed);
 }
 
+void check_stuck(){
+  front_distance = frontIR.distance();
+  left_distance = leftIR.distance();
+  right_distance = rightIR.distance();
+  down_distance = downIR.distance();
+
+  //if distance to floor is greater than 25cm attempt to reverse to get unstuck
+  if (down_distance > 25){
+    move(-50,-50);
+    delay(1000);
+    move(0,0);
+  }
+
+  //should implement more logic to check if front, left, right distance don't change for a while then turn/wiggle etc
+}
+
 
 bool line_following(){
   bool following = true;
@@ -168,9 +193,11 @@ bool wall_following(){
   bool following = true;
 
   while (following){
-    left_distance = read_distance_sensor(LEFT_DISTANCE_PIN);
-    right_distance = read_distance_sensor(RIGHT_DISTANCE_PIN);
-    front_distance = read_distance_sensor(FRONT_DISTANCE_PIN);
+    front_distance = frontIR.distance();
+    left_distance = leftIR.distance();
+    right_distance = rightIR.distance();
+    down_distance = downIR.distance();
+    
 
     //change to PID controller if needed
     if (left_distance - right_distance > 10){
@@ -189,7 +216,8 @@ bool wall_following(){
     }
 
     check_kill_switch();
-    delay(50);
+    check_stuck();
+    delay(50); //small delay to allow motors to move robot before overeacting
   }
 
   return true;
