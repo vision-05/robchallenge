@@ -5,16 +5,19 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <SharpIR.h>
+#include <qtr.h>
 
 
 
 #include "constants.h"
 
 //initialise classes
-MotoronI2C mdL;
+//MotoronI2C mdR;
+//MotoronI2C mdL;
+QTR qtr;
 
-//MotoronI2C mdL(0x10);
-//MotoronI2C mdR(0xF);
+MotoronI2C mdL(15);
+MotoronI2C mdR(16);
 
 Servo sensor_servo;
 
@@ -25,6 +28,8 @@ SharpIR frontIR(FRONT_IR_PIN, IR_MODEL);
 SharpIR leftIR(LEFT_IR_PIN, IR_MODEL);
 SharpIR rightIR(RIGHT_IR_PIN, IR_MODEL);
 SharpIR downIR(DOWN_IR_PIN, IR_MODEL);
+
+int count = 9;
 
 
 int left_speed = 0; //percentage for left speed -100% to 100%
@@ -52,7 +57,8 @@ unsigned int localPort = 2390; // local port to listen for UDP packets
 byte packetBuffer[PACKET_SIZE]; // buffer to hold incoming and outgoing packets
 
 
-bool button_pressed = false;
+bool button_not_pressed = true;
+int msg = 0;
 
 //section logic
 int section_idx = 0;
@@ -69,7 +75,7 @@ float read_distance_sensor(int pin){
   float total = 0.0f;
   
   //read multiple times and take average to reduce noise
-  for (int i = 0; i < NUM_SENSOR_AVG){
+  for (int i = 0; i < NUM_SENSOR_AVG; ++i){
     distance = 0.0f; //implement actual logic to read sensor here
 
     total = total + distance;
@@ -87,19 +93,21 @@ int read_udp(){
     return 0;
   } 
 
-  Udp.read(packetBuffer, NTP_PACKET_SIZE);
-
-  word(packetBuffer)
+  Udp.read(packetBuffer, PACKET_SIZE);
+  return 1;
 }
 
 void check_kill_switch(){
-  //physical switch
+  /*//physical switch
   if (digitalRead(KILL_SWITCH)){
+    msg = 1;
+    delay(1000);
     shutdown();
   }
-
+*/
   //wifi switch
   if (read_udp()){
+    msg = 1;
     shutdown();
   }
   
@@ -112,14 +120,25 @@ void shutdown(){
 
   //force get stuck in loop to stop all movement
   while (stopped){
+    if(read_udp()) {
+      msg = 0;
+    }
     Serial.println("Kill switch activated!");
-    delay(1000);
 
     //if switch detected again, continue operation
-    if (digitalRead(KILL_SWITCH)){
+    /*if (digitalRead(KILL_SWITCH)){
+      Serial.println("Resuming");
       stopped = false;
+      delay(1000);
+    }*/
+
+    if(!msg) {
+      Serial.println("Resuming");
+      stopped = false;
+      delay(1000);
     }
   }
+  Serial.println("Finished");
 }
 
 /// @brief sets the motors to the correct PWMs
@@ -128,13 +147,13 @@ void shutdown(){
 void move(int left, int right){
   //capping percentages
   if (left > 100){
-    left = 100
+    left = 100;
   } else if (left < -100){
     left = -100;
   }
 
   if (right > 100){
-    right = 100
+    right = 100;
   } else if (right < -100){
     right = -100;
   }
@@ -156,10 +175,10 @@ void move(int left, int right){
 }
 
 void check_stuck(){
-  front_distance = frontIR.distance();
-  left_distance = leftIR.distance();
-  right_distance = rightIR.distance();
-  down_distance = downIR.distance();
+  front_distance = frontIR.getDistance();
+  left_distance = leftIR.getDistance();
+  right_distance = rightIR.getDistance();
+  down_distance = downIR.getDistance();
 
   //if distance to floor is greater than 25cm attempt to reverse to get unstuck
   if (down_distance > 25){
@@ -174,10 +193,13 @@ void check_stuck(){
 
 bool line_following(){
   bool following = true;
-
+  int t = 0;
   while (following){
     //tim tim please implement :)
-
+    ++t;
+    if(t > 1000) {
+      following = false;
+    }
     check_kill_switch();
   }
 
@@ -193,10 +215,10 @@ bool wall_following(){
   bool following = true;
 
   while (following){
-    front_distance = frontIR.distance();
-    left_distance = leftIR.distance();
-    right_distance = rightIR.distance();
-    down_distance = downIR.distance();
+    front_distance = frontIR.getDistance();
+    left_distance = leftIR.getDistance();
+    right_distance = rightIR.getDistance();
+    down_distance = downIR.getDistance();
     
 
     //change to PID controller if needed
@@ -252,7 +274,7 @@ void setup(){
   Wire.begin();
 
   Serial.println("Initialising system...");
-
+  
   // check for the WiFi module:
   while (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
@@ -270,24 +292,31 @@ void setup(){
     delay(5000);
   }
 
-  Serial.print("You're connected to the network");
-  printCurrentNet();
-  printWifiData();
+  Serial.println("You're connected to the network");
+  IPAddress ip = WiFi.localIP();
+  Serial.println(ip);
 
   Udp.begin(localPort);
 
   //initialise all sensors here:
-  // Serial.println("Initialising Left Motoron Motor Driver...");
-  // mdL.reinitialize();
-  // mdL.disableCrc();
-  // mdL.clearResetFlag();
-  // Serial.println("Left Motoron Motor Driver Connected!");
+  Serial.println("Initialising Left Motoron Motor Driver...");
+  mdL.reinitialize();
+  mdL.disableCrc();
+  mdL.clearResetFlag();
+  Serial.println("Left Motoron Motor Driver Connected!");
 
-  // Serial.println("Initialising Right Motoron Motor Driver...");
-  // mdR.reinitialize();
-  // mdR.disableCrc();
-  // mdR.clearResetFlag();
-  // Serial.println("Right Motoron Motor Driver Connected!");
+  Serial.println("Initialising Right Motoron Motor Driver...");
+  mdR.reinitialize();
+  mdR.disableCrc();
+  mdR.clearResetFlag();
+  Serial.println("Right Motoron Motor Driver Connected!");
+
+  for(int i = 0; i < 3; ++i) {
+    mdR.setMaxAcceleration(i,80);
+    mdL.setMaxAcceleration(i,80);
+    mdR.setMaxDeceleration(i,300);
+    mdL.setMaxDeceleration(i,300);  
+  }
 
   Serial.println("Attaching Servos!");
   sensor_servo.attach(SERVO_PIN);
@@ -297,19 +326,61 @@ void setup(){
   delay(100);
   
   //wait for start button
-  while(!button_pressed){
-    button_pressed = digitalRead(KILL_SWITCH);
+  while(!button_not_pressed){
+    
+    button_not_pressed = digitalRead(KILL_SWITCH);
+    Serial.println(button_not_pressed);
   }
 
-  println("Starting main sequence")
+  Serial.println("Starting main sequence");
+
+  qtr.setTimeout(1000);
+  uint8_t sensors[count] = {36,38,40,42,44,46,48,50,52};
+  qtr.setSensorPins(sensors,count);
 }
 
 void loop(){
   bool finished = false;
 
+  
+
   switch (current_section)
   {
     case LINE_FOLLOW:
+      for(uint16_t i = 0; i < 20; i++) {
+        qtr.calibrate(10, Emitter::Off, Parity::EvenAndOdd);
+        delay(500);
+      }
+      
+
+      for(int i = 0; i < 3; ++i) {
+        mdL.setSpeed(i,600);
+        mdR.setSpeed(i,600);
+      }
+      mdL.setSpeed(3,800);
+      mdR.setSpeed(3,800);
+      delay(5000);
+      for(int i = 0; i < 2; ++i) {
+        mdL.setSpeed(i,-600);
+        mdR.setSpeed(i,-600);
+      }
+      mdL.setSpeed(3,-800);
+      mdR.setSpeed(3,-800);
+      delay(5000);
+      for(int i = 0; i < 2; ++i) {
+        mdL.setSpeed(i,0);
+        mdR.setSpeed(i,600);
+      }
+      mdL.setSpeed(3,0);
+      mdR.setSpeed(3,800);
+      delay(5000);
+      for(int i = 0; i < 2; ++i) {
+        mdL.setSpeed(i,600);
+        mdR.setSpeed(i,0);
+      }
+      mdL.setSpeed(3,800);
+      mdR.setSpeed(3,0);
+      delay(5000);
       finished = line_following();
       break;
 
@@ -330,8 +401,26 @@ void loop(){
 
       //enter infinite loop when finished all sections
       while (true){
-        println("Finished sequence!");
+        Serial.print("Front IR: ");
+        Serial.println(frontIR.getDistance());
+
+        qtr.readSensors();
+      for(uint8_t i = 0; i < count; i++) {
+        Serial.print(qtr[i]);
+        Serial.print(' ');
+      }
+      qtr.readCalibrated();
+      for(uint8_t i = 0; i < count; i++) {
+        Serial.print(qtr[i]);
+        Serial.print(' ');
+      }
+      qtr.readBlackLine();
+      for(uint8_t i = 0; i < count; i++) {
+        Serial.print(qtr[i]);
+        Serial.print(' ');
+      }
         delay(1000);
+        check_kill_switch();
       }
     }
 

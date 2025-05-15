@@ -7,10 +7,10 @@
 #define FRONT_DISTANCE_PIN 6
 #define FLOOR_DISTANCE_PIN 7
 
-#define SERVO_PIN 9
+#define SERVO_PIN 17
 
-#define SECRET_SSID "yournetwork"
-#define SECRET_PASS "yourpassword"
+#define SECRET_SSID "Timtimtimtimtim"
+#define SECRET_PASS "ajs35ddagtxq7m2"
 #define PACKET_SIZE 48
 
 #define IR_MODEL 1080
@@ -28,7 +28,7 @@ enum Section{
     ZIPLINE,
 };
 
-const Section section_order[] = [LINE_FOLLOW];
+const Section section_order[] = {Section::LINE_FOLLOW};
 
 const int BASE_SPEED = 50; //base speed of robot as percentage
 
