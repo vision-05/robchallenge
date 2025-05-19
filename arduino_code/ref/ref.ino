@@ -2,13 +2,14 @@
 
 const int count = 9;
 QTR qtr;
+QTR qtr2;
 
 void setup() {
   Serial.begin(9600);
 
   Serial.println("Hello");
   qtr.setTimeout(1000);
-  uint8_t sensors[count] = {52,50,48,44,42,40,38,36,34};
+  uint8_t sensors[count] = {36,38,40,42,44,46,48,50,52};
   qtr.setSensorPins(sensors,count);
   Serial.println("Set pins");
 
