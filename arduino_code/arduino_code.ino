@@ -20,7 +20,7 @@ Servo sensor_servo;
 
 WiFiUDP Udp; //UDP to receive WiFi signal
 
-//infra-red distance sensor classes
+//infra-red distance sensor classes (library reference: https://github.com/guillaume-rico/SharpIR)
 SharpIR frontIR(FRONT_IR_PIN, IR_MODEL);
 SharpIR leftIR(LEFT_IR_PIN, IR_MODEL);
 SharpIR rightIR(RIGHT_IR_PIN, IR_MODEL);
@@ -193,10 +193,10 @@ bool wall_following(){
   bool following = true;
 
   while (following){
-    front_distance = frontIR.distance();
-    left_distance = leftIR.distance();
-    right_distance = rightIR.distance();
-    down_distance = downIR.distance();
+    front_distance = frontIR.getDistance();
+    left_distance = leftIR.getDistance();
+    right_distance = rightIR.getDistance();
+    down_distance = downIR.getDistance();
     
 
     //change to PID controller if needed
@@ -271,8 +271,6 @@ void setup(){
   }
 
   Serial.print("You're connected to the network");
-  printCurrentNet();
-  printWifiData();
 
   Udp.begin(localPort);
 
@@ -301,7 +299,7 @@ void setup(){
     button_pressed = digitalRead(KILL_SWITCH);
   }
 
-  println("Starting main sequence")
+  Serial.println("Starting main sequence");
 }
 
 void loop(){
@@ -330,7 +328,7 @@ void loop(){
 
       //enter infinite loop when finished all sections
       while (true){
-        println("Finished sequence!");
+        Serial.println("Finished sequence!");
         delay(1000);
       }
     }
