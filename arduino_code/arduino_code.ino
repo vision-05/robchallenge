@@ -23,7 +23,7 @@ Servo sensor_servo;
 
 WiFiUDP Udp; //UDP to receive WiFi signal
 
-//infra-red distance sensor classes
+//infra-red distance sensor classes (library reference: https://github.com/guillaume-rico/SharpIR)
 SharpIR frontIR(FRONT_IR_PIN, IR_MODEL);
 SharpIR leftIR(LEFT_IR_PIN, IR_MODEL);
 SharpIR rightIR(RIGHT_IR_PIN, IR_MODEL);
