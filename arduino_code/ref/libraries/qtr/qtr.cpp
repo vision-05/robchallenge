@@ -9,18 +9,43 @@ uint8_t QTR::sum(uint8_t* arr, uint8_t cnt) {
 	return res;
 }
 
+/**
+* @details
+* Sets the calibration status to 0
+*/
 QTR::QTR() {
 	this->recalibrated = 0;
 }
 
+/**
+* @details
+* Sets the maxtime field to the `timeout` specified.
+* If a sensor doesn't discharge after this length of time, 
+* then this is the default sensor reading value */
 void QTR::setTimeout(uint32_t timeout) {
 	this->maxtime = timeout;
 }
 
+/**
+* @details
+* Sets the calibration status to 0.
+* This allows for a "fresh" calibration, which ignores any previously calibrated maximum and minimum values
+*/
 void QTR::resetCalibrationStatus() {
 	this->recalibrated = 0;
 }
 
+void QTR::setThreshold(int* t) {
+	this->threshold = t;
+}
+
+int QTR::getThreshold() {
+	return *(this->threshold);
+}
+
+/**
+* @details
+* Sets the count and pins of the sensor, with no bounds checking */
 void QTR::setSensorPins(uint8_t* pins, uint8_t count) {
 	this->count = count;
 	if(this->sensors == nullptr) {
@@ -34,8 +59,13 @@ void QTR::setSensorPins(uint8_t* pins, uint8_t count) {
 	//undefined for reassignment so far
 }
 
-//try and find max and min values of reflectance based on trial period
-//calibrate either with ambient light or no light
+/**
+* @details
+* Calibrate the sensor by finding the maximum and minimum of a set of values.
+* Taking `times` sensor readings that hopefully have different results to provide a large range between max and min.
+* Can specify whether the emitters will be on or off during the calibration, and until recalibration is set
+* this is the only way to change which emitters are set to ensure continuity of readings
+*/
 void QTR::calibrate(uint8_t times, Emitter e, Parity p) {
 	if(this->recalibrated == 0) {
 		this->calmax = new uint32_t[this->count];
@@ -73,6 +103,24 @@ void QTR::calibrate(uint8_t times, Emitter e, Parity p) {
 		}
 	}
 
+
+
+	uint32_t maxmax = 0;
+	uint32_t minmin = this->maxtime;
+	for(int i = 0; i < this->count; ++i) {
+		if(this->calmax[i] > maxmax) {
+			maxmax = this->calmax[i];
+		}
+		if(this->calmin[i] < minmin) {
+			minmin = this->calmin[i];
+		}
+	}
+
+	for(int i = 0; i < this->count; ++i) {
+		this->calmax[i] = maxmax;
+		this->calmin[i] = minmin;
+	}
+
 	delete[] curmin;
 	delete[] curmax;
 
@@ -80,6 +128,11 @@ void QTR::calibrate(uint8_t times, Emitter e, Parity p) {
 	
 }
 
+/**
+* @details
+* Read the sensors by setting the circuits to `HIGH`, waiting 10 microseconds and then timing how long it takes to discharge to low.
+* Does not use `noInterrupts()` as the Arduino GIGA crashes.
+* Provides a raw value that needs calibration to be useful */
 void QTR::readSensors() {
 	this->switchEmittersOn(this->em, this->pa);
 	uint8_t* readStatus = new uint8_t[this->count];
@@ -136,7 +189,7 @@ void QTR::readCalibrated() {
 void QTR::readBlackLine() {
 	this->readCalibrated();
 	for(int i = 0; i < this->count; ++i) {
-		if(this->readings[i] > 250) {
+		if(this->readings[i] > *(this->threshold)) {
 			this->readings[i] = 1;
 		}
 		else {

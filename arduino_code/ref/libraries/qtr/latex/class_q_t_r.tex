@@ -1,44 +1,328 @@
 \doxysection{QTR Class Reference}
 \hypertarget{class_q_t_r}{}\label{class_q_t_r}\index{QTR@{QTR}}
+
+
+Class to take sensor readings from polulu \doxylink{class_q_t_r}{QTR} digital sensor arrays.  
+
+
+
+
+{\ttfamily \#include $<$qtr.\+h$>$}
+
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{class_q_t_r_ad72c920ae9484c3e7f9573a6fc152ee2}\label{class_q_t_r_ad72c920ae9484c3e7f9573a6fc152ee2} 
-void {\bfseries set\+Timeout} (uint32\+\_\+t timeout)
-\begin{DoxyCompactList}\small\item\em Set the timeout duration in microseconds for our sensor reading. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_a3f50a338cf8414ea1a4fb247e01ddd6b}\label{class_q_t_r_a3f50a338cf8414ea1a4fb247e01ddd6b} 
-void {\bfseries set\+Sensor\+Pins} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}pins, uint8\+\_\+t count)
-\begin{DoxyCompactList}\small\item\em Set the pin numbers of the sensor array up to the count. No bounds checking so be careful. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_a2b13154ec657636af2c881dc032c8872}\label{class_q_t_r_a2b13154ec657636af2c881dc032c8872} 
-void {\bfseries set\+Even\+Emitter} (uint8\+\_\+t pin)
-\begin{DoxyCompactList}\small\item\em Set the pin number of the even emitter control pin. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_a741aeba8937aa46d7cc23a11c22a2366}\label{class_q_t_r_a741aeba8937aa46d7cc23a11c22a2366} 
-void {\bfseries set\+Odd\+Emitter} (uint8\+\_\+t pin)
-\begin{DoxyCompactList}\small\item\em Set the pin number of the odd emitter control pin. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_aee08f22bb2335a8a9234151eba5647eb}\label{class_q_t_r_aee08f22bb2335a8a9234151eba5647eb} 
-void {\bfseries emitter\+Test} ()
-\begin{DoxyCompactList}\small\item\em Test the emitters are working. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94}\label{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94} 
-void {\bfseries calibrate} (uint8\+\_\+t times, Emitter e, Parity p)
-\begin{DoxyCompactList}\small\item\em Calibrate the sensor, set e to the status of the emitter, p to choose which emitters are on/off/flashing. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_ad527782b6ddaacf5abc34cd6348424c6}\label{class_q_t_r_ad527782b6ddaacf5abc34cd6348424c6} 
-void {\bfseries reset\+Calibration\+Status} ()
-\begin{DoxyCompactList}\small\item\em Reset the calibration status. Next time \doxylink{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94}{calibrate()} runs it will start with no max or min values. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_ad73864d7fb01d7f6b74a5b232e10c5ae}\label{class_q_t_r_ad73864d7fb01d7f6b74a5b232e10c5ae} 
-void {\bfseries read\+Sensors} (uint32\+\_\+t \texorpdfstring{$\ast$}{*}values, uint8\+\_\+t len, Emitter e, Parity p)
-\begin{DoxyCompactList}\small\item\em Take raw sensor reading, as time for HIGH to LOW decay. Pass emitter and parity flags. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_a59fe70babcb985ff851f201371bd1b34}\label{class_q_t_r_a59fe70babcb985ff851f201371bd1b34} 
-void {\bfseries read\+Calibrated} (uint32\+\_\+t \texorpdfstring{$\ast$}{*}values, uint8\+\_\+t len, Emitter e, Parity p)
-\begin{DoxyCompactList}\small\item\em Scales the readings by calibration values to provide accurate reflectance values. Pass e and p for emitter and parity flags. \end{DoxyCompactList}\item 
-\Hypertarget{class_q_t_r_a49e007d4d58678b6e144f42c4a87443d}\label{class_q_t_r_a49e007d4d58678b6e144f42c4a87443d} 
-uint8\+\_\+t {\bfseries sum} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}arr, uint8\+\_\+t cnt)
-\item 
-\Hypertarget{class_q_t_r_af44d4ef475f3aab25d2ab09666c55b50}\label{class_q_t_r_af44d4ef475f3aab25d2ab09666c55b50} 
-uint32\+\_\+t {\bfseries get\+Cal\+Min} (int index)
-\item 
-\Hypertarget{class_q_t_r_a2620c3098d950ecedafa3b1fbdcb08df}\label{class_q_t_r_a2620c3098d950ecedafa3b1fbdcb08df} 
-uint32\+\_\+t {\bfseries get\+Cal\+Max} (int index)
-\end{DoxyCompactItemize}
+\mbox{\hyperlink{class_q_t_r_a5774666ca6eb11a96e5e9b6d716cfa09}{QTR}} ()
+\begin{DoxyCompactList}\small\item\em Constructor for the sensor class. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_ad72c920ae9484c3e7f9573a6fc152ee2}{set\+Timeout}} (uint32\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Set sensor timeout for a maximum reading. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_a3f50a338cf8414ea1a4fb247e01ddd6b}{set\+Sensor\+Pins}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}pins, uint8\+\_\+t count)
+\begin{DoxyCompactList}\small\item\em Set the pins that correlate to the sensor data lines. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94}{calibrate}} (uint8\+\_\+t times, Emitter e, Parity p)
+\begin{DoxyCompactList}\small\item\em Calibrate the sensor {\ttfamily times} times with options for emitter. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_ad527782b6ddaacf5abc34cd6348424c6}{reset\+Calibration\+Status}} ()
+\begin{DoxyCompactList}\small\item\em Reset the calibration status, deleting old calibration values. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_af4149c514037146813ce86c5807f130a}{read\+Sensors}} ()
+\begin{DoxyCompactList}\small\item\em Read sensor values as time to discharge sensing circuit. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_af7f0935f0a92221ba41e0fa6eb21cd0c}{read\+Calibrated}} ()
+\begin{DoxyCompactList}\small\item\em Read sensor values and scale by calibration constants. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_a070b3705f0c42b234930e087056d7e11}{read\+Black\+Line}} ()
+\begin{DoxyCompactList}\small\item\em Read calibrated values and convert to black line reading. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_q_t_r_ac2a90a6cb7ed0b4963cfe45eb65d2d5f}{\texorpdfstring{$\sim$}{\string~}\+QTR}} ()
+\begin{DoxyCompactList}\small\item\em Deallocate all heap memory. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{class_q_t_r_a49e007d4d58678b6e144f42c4a87443d}{sum}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}arr, uint8\+\_\+t cnt)
+\begin{DoxyCompactList}\small\item\em Sum an array of uint8\+\_\+t, used in {\ttfamily function} \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{class_q_t_r_af44d4ef475f3aab25d2ab09666c55b50}{get\+Cal\+Min}} (int index)
+\begin{DoxyCompactList}\small\item\em Returns the max value for the nth sensor in the array determined from calibration. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{class_q_t_r_a2620c3098d950ecedafa3b1fbdcb08df}{get\+Cal\+Max}} (int index)
+\begin{DoxyCompactList}\small\item\em Returns the min value for the nth sensor in the array determined from calibration. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{class_q_t_r_a63d87247c1376615c100b8703ef984de}{operator\mbox{[}$\,$\mbox{]}}} (int index)
+\begin{DoxyCompactList}\small\item\em Returns the last read value of the nth sensor in the array. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_a2b13154ec657636af2c881dc032c8872}{set\+Even\+Emitter}} (uint8\+\_\+t pin)
+\begin{DoxyCompactList}\small\item\em Sets the pin for controlling the even numbered emitters. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_a741aeba8937aa46d7cc23a11c22a2366}{set\+Odd\+Emitter}} (uint8\+\_\+t pin)
+\begin{DoxyCompactList}\small\item\em Sets the pin for controlling the odd numbered emitters. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_q_t_r_a7c971b9534b941233baed872bc0d6e9d}{set\+Threshold}} (int \texorpdfstring{$\ast$}{*}t)
+\begin{DoxyCompactList}\small\item\em Set the pointer to the threshold from a calibrated reading for black line detection. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_q_t_r_ab436167d5a2b41096e9762ab6bb35172}{get\+Threshold}} ()
+\begin{DoxyCompactList}\small\item\em Get the threshold value for this sensor array. \end{DoxyCompactList}\item 
+const uint32\+\_\+t \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_q_t_r_ad85baf0dabf48e9870d8e9d19832991d}{get\+Readings}} () const
+\begin{DoxyCompactList}\small\item\em Get a read only view of the whole readings array. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to take sensor readings from polulu \doxylink{class_q_t_r}{QTR} digital sensor arrays. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_q_t_r_a5774666ca6eb11a96e5e9b6d716cfa09}\index{QTR@{QTR}!QTR@{QTR}}
+\index{QTR@{QTR}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{QTR()}{QTR()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a5774666ca6eb11a96e5e9b6d716cfa09} 
+QTR\+::\+QTR (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Constructor for the sensor class. 
+
+\begin{DoxyParagraph}{Parameters}
+None.
+\end{DoxyParagraph}
+Sets the calibration status to 0 \Hypertarget{class_q_t_r_ac2a90a6cb7ed0b4963cfe45eb65d2d5f}\index{QTR@{QTR}!````~QTR@{\texorpdfstring{$\sim$}{\string~}QTR}}
+\index{````~QTR@{\texorpdfstring{$\sim$}{\string~}QTR}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}QTR()}{\string~QTR()}}
+{\footnotesize\ttfamily \label{class_q_t_r_ac2a90a6cb7ed0b4963cfe45eb65d2d5f} 
+QTR\+::\texorpdfstring{$\sim$}{\string~}\+QTR (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Deallocate all heap memory. 
+
+\begin{DoxyParagraph}{Parameters}
+None. 
+\end{DoxyParagraph}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94}\index{QTR@{QTR}!calibrate@{calibrate}}
+\index{calibrate@{calibrate}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{calibrate()}{calibrate()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94} 
+void QTR\+::calibrate (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{times}{, }\item[{Emitter}]{e}{, }\item[{Parity}]{p}{}\end{DoxyParamCaption})}
+
+
+
+Calibrate the sensor {\ttfamily times} times with options for emitter. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em times} & Number of times to read the sensor for calibration \\
+\hline
+\mbox{\texttt{ in}}  & {\em e} & The status of the emitters \\
+\hline
+\mbox{\texttt{ in}}  & {\em p} & The selection of even/odd emitters\\
+\hline
+\end{DoxyParams}
+Calibrate the sensor by finding the maximum and minimum of a set of values. Taking {\ttfamily times} sensor readings that hopefully have different results to provide a large range between max and min. Can specify whether the emitters will be on or off during the calibration, and until recalibration is set this is the only way to change which emitters are set to ensure continuity of readings \Hypertarget{class_q_t_r_a2620c3098d950ecedafa3b1fbdcb08df}\index{QTR@{QTR}!getCalMax@{getCalMax}}
+\index{getCalMax@{getCalMax}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{getCalMax()}{getCalMax()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a2620c3098d950ecedafa3b1fbdcb08df} 
+uint32\+\_\+t QTR\+::get\+Cal\+Max (\begin{DoxyParamCaption}\item[{int}]{index}{}\end{DoxyParamCaption})}
+
+
+
+Returns the min value for the nth sensor in the array determined from calibration. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em index} & index into the array of sensors we are getting the calibrated max of \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_q_t_r_af44d4ef475f3aab25d2ab09666c55b50}\index{QTR@{QTR}!getCalMin@{getCalMin}}
+\index{getCalMin@{getCalMin}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{getCalMin()}{getCalMin()}}
+{\footnotesize\ttfamily \label{class_q_t_r_af44d4ef475f3aab25d2ab09666c55b50} 
+uint32\+\_\+t QTR\+::get\+Cal\+Min (\begin{DoxyParamCaption}\item[{int}]{index}{}\end{DoxyParamCaption})}
+
+
+
+Returns the max value for the nth sensor in the array determined from calibration. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em index} & index into the array of sensors we are getting the calibrated min of \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_q_t_r_ad85baf0dabf48e9870d8e9d19832991d}\index{QTR@{QTR}!getReadings@{getReadings}}
+\index{getReadings@{getReadings}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{getReadings()}{getReadings()}}
+{\footnotesize\ttfamily \label{class_q_t_r_ad85baf0dabf48e9870d8e9d19832991d} 
+const uint32\+\_\+t \texorpdfstring{$\ast$}{*} QTR\+::get\+Readings (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get a read only view of the whole readings array. 
+
+\begin{DoxyParagraph}{Parameters}
+None. 
+\end{DoxyParagraph}
+\Hypertarget{class_q_t_r_ab436167d5a2b41096e9762ab6bb35172}\index{QTR@{QTR}!getThreshold@{getThreshold}}
+\index{getThreshold@{getThreshold}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{getThreshold()}{getThreshold()}}
+{\footnotesize\ttfamily \label{class_q_t_r_ab436167d5a2b41096e9762ab6bb35172} 
+int QTR\+::get\+Threshold (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Get the threshold value for this sensor array. 
+
+\begin{DoxyParagraph}{Parameters}
+None. 
+\end{DoxyParagraph}
+\Hypertarget{class_q_t_r_a63d87247c1376615c100b8703ef984de}\index{QTR@{QTR}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a63d87247c1376615c100b8703ef984de} 
+uint32\+\_\+t QTR\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{int}]{index}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the last read value of the nth sensor in the array. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em index} & index of the sensor we want to take reading of\\
+\hline
+\end{DoxyParams}
+Returns a copy of the reading at {\ttfamily index}, based on the last read function that was called If {\ttfamily \doxylink{class_q_t_r_af7f0935f0a92221ba41e0fa6eb21cd0c}{read\+Calibrated()}} or {\ttfamily \doxylink{class_q_t_r_af4149c514037146813ce86c5807f130a}{read\+Sensors()}} was called last, readings can be any integers. If {\ttfamily \doxylink{class_q_t_r_a070b3705f0c42b234930e087056d7e11}{read\+Black\+Line()}} was last called, readings will be 1 or 0 \Hypertarget{class_q_t_r_a070b3705f0c42b234930e087056d7e11}\index{QTR@{QTR}!readBlackLine@{readBlackLine}}
+\index{readBlackLine@{readBlackLine}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{readBlackLine()}{readBlackLine()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a070b3705f0c42b234930e087056d7e11} 
+void QTR\+::read\+Black\+Line (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Read calibrated values and convert to black line reading. 
+
+
+\begin{DoxyRetVals}{Return values}
+{\em 1} & sensor over black line \\
+\hline
+{\em 0} & sensor not over black line \\
+\hline
+\end{DoxyRetVals}
+\Hypertarget{class_q_t_r_af7f0935f0a92221ba41e0fa6eb21cd0c}\index{QTR@{QTR}!readCalibrated@{readCalibrated}}
+\index{readCalibrated@{readCalibrated}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{readCalibrated()}{readCalibrated()}}
+{\footnotesize\ttfamily \label{class_q_t_r_af7f0935f0a92221ba41e0fa6eb21cd0c} 
+void QTR\+::read\+Calibrated (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Read sensor values and scale by calibration constants. 
+
+\begin{DoxyParagraph}{Parameters}
+None. 
+\end{DoxyParagraph}
+\Hypertarget{class_q_t_r_af4149c514037146813ce86c5807f130a}\index{QTR@{QTR}!readSensors@{readSensors}}
+\index{readSensors@{readSensors}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{readSensors()}{readSensors()}}
+{\footnotesize\ttfamily \label{class_q_t_r_af4149c514037146813ce86c5807f130a} 
+void QTR\+::read\+Sensors (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Read sensor values as time to discharge sensing circuit. 
+
+\begin{DoxyParagraph}{Parameters}
+None.
+\end{DoxyParagraph}
+Read the sensors by setting the circuits to {\ttfamily HIGH}, waiting 10 microseconds and then timing how long it takes to discharge to low. Does not use {\ttfamily no\+Interrupts()} as the Arduino GIGA crashes. Provides a raw value that needs calibration to be useful \Hypertarget{class_q_t_r_ad527782b6ddaacf5abc34cd6348424c6}\index{QTR@{QTR}!resetCalibrationStatus@{resetCalibrationStatus}}
+\index{resetCalibrationStatus@{resetCalibrationStatus}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{resetCalibrationStatus()}{resetCalibrationStatus()}}
+{\footnotesize\ttfamily \label{class_q_t_r_ad527782b6ddaacf5abc34cd6348424c6} 
+void QTR\+::reset\+Calibration\+Status (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Reset the calibration status, deleting old calibration values. 
+
+\begin{DoxyParagraph}{Parameters}
+None.
+\end{DoxyParagraph}
+Sets the calibration status to 0. This allows for a "{}fresh"{} calibration, which ignores any previously calibrated maximum and minimum values \Hypertarget{class_q_t_r_a2b13154ec657636af2c881dc032c8872}\index{QTR@{QTR}!setEvenEmitter@{setEvenEmitter}}
+\index{setEvenEmitter@{setEvenEmitter}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{setEvenEmitter()}{setEvenEmitter()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a2b13154ec657636af2c881dc032c8872} 
+void QTR\+::set\+Even\+Emitter (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{pin}{}\end{DoxyParamCaption})}
+
+
+
+Sets the pin for controlling the even numbered emitters. 
+
+Set the pin number of the even emitter control pin.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pin} & number assigned to the pin connected to the even emitters \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_q_t_r_a741aeba8937aa46d7cc23a11c22a2366}\index{QTR@{QTR}!setOddEmitter@{setOddEmitter}}
+\index{setOddEmitter@{setOddEmitter}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{setOddEmitter()}{setOddEmitter()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a741aeba8937aa46d7cc23a11c22a2366} 
+void QTR\+::set\+Odd\+Emitter (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{pin}{}\end{DoxyParamCaption})}
+
+
+
+Sets the pin for controlling the odd numbered emitters. 
+
+Set the pin number of the odd emitter control pin.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pin} & number assigned to the pin connected to the odd emitters \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_q_t_r_a3f50a338cf8414ea1a4fb247e01ddd6b}\index{QTR@{QTR}!setSensorPins@{setSensorPins}}
+\index{setSensorPins@{setSensorPins}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{setSensorPins()}{setSensorPins()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a3f50a338cf8414ea1a4fb247e01ddd6b} 
+void QTR\+::set\+Sensor\+Pins (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{pins}{, }\item[{uint8\+\_\+t}]{count}{}\end{DoxyParamCaption})}
+
+
+
+Set the pins that correlate to the sensor data lines. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pins} & An array of pin numbers \\
+\hline
+\mbox{\texttt{ in}}  & {\em count} & The number of pins\\
+\hline
+\end{DoxyParams}
+Sets the count and pins of the sensor, with no bounds checking \Hypertarget{class_q_t_r_a7c971b9534b941233baed872bc0d6e9d}\index{QTR@{QTR}!setThreshold@{setThreshold}}
+\index{setThreshold@{setThreshold}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{setThreshold()}{setThreshold()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a7c971b9534b941233baed872bc0d6e9d} 
+void QTR\+::set\+Threshold (\begin{DoxyParamCaption}\item[{int \texorpdfstring{$\ast$}{*}}]{t}{}\end{DoxyParamCaption})}
+
+
+
+Set the pointer to the threshold from a calibrated reading for black line detection. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em t} & the pointer to the variable the threshold is stored in \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_q_t_r_ad72c920ae9484c3e7f9573a6fc152ee2}\index{QTR@{QTR}!setTimeout@{setTimeout}}
+\index{setTimeout@{setTimeout}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{setTimeout()}{setTimeout()}}
+{\footnotesize\ttfamily \label{class_q_t_r_ad72c920ae9484c3e7f9573a6fc152ee2} 
+void QTR\+::set\+Timeout (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout}{}\end{DoxyParamCaption})}
+
+
+
+Set sensor timeout for a maximum reading. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em timeout} & The timeout in microseconds\\
+\hline
+\end{DoxyParams}
+Sets the maxtime field to the {\ttfamily timeout} specified. If a sensor doesn\textquotesingle{}t discharge after this length of time, then this is the default sensor reading value \Hypertarget{class_q_t_r_a49e007d4d58678b6e144f42c4a87443d}\index{QTR@{QTR}!sum@{sum}}
+\index{sum@{sum}!QTR@{QTR}}
+\doxysubsubsection{\texorpdfstring{sum()}{sum()}}
+{\footnotesize\ttfamily \label{class_q_t_r_a49e007d4d58678b6e144f42c4a87443d} 
+uint8\+\_\+t QTR\+::sum (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{arr}{, }\item[{uint8\+\_\+t}]{cnt}{}\end{DoxyParamCaption})}
+
+
+
+Sum an array of uint8\+\_\+t, used in {\ttfamily function} 
+
+\begin{DoxyParagraph}{Parameters}
+None. 
+\end{DoxyParagraph}
 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
