@@ -98,13 +98,13 @@ int read_udp(){
 }
 
 void check_kill_switch(){
-  /*//physical switch
+  //physical switch
   if (digitalRead(KILL_SWITCH)){
     msg = 1;
     delay(1000);
     shutdown();
   }
-*/
+
   //wifi switch
   if (read_udp()){
     msg = 1;
@@ -126,11 +126,11 @@ void shutdown(){
     Serial.println("Kill switch activated!");
 
     //if switch detected again, continue operation
-    /*if (digitalRead(KILL_SWITCH)){
+    if (digitalRead(KILL_SWITCH)){
       Serial.println("Resuming");
       stopped = false;
       delay(1000);
-    }*/
+    }
 
     if(!msg) {
       Serial.println("Resuming");
@@ -375,7 +375,18 @@ void loop(){
   switch (current_section)
   {
     case LINE_FOLLOW:
-      move(100, 100);
+      for(uint16_t i = 0; i < 20; i++) {
+        qtr.calibrate(10, Emitter::Off, Parity::EvenAndOdd);
+        delay(500);
+      }
+      
+
+      /*for(int i = 0; i < 3; ++i) {
+        mdL.setSpeed(i,600);
+        mdR.setSpeed(i,600);
+      }
+      mdL.setSpeed(3,800);
+      mdR.setSpeed(3,800);
       delay(5000);
       
       move(-100, -100);
@@ -415,16 +426,19 @@ void loop(){
         Serial.print(qtr[i]);
         Serial.print(' ');
       }
+      Serial.println();
       qtr.readCalibrated();
       for(uint8_t i = 0; i < count; i++) {
         Serial.print(qtr[i]);
         Serial.print(' ');
       }
+      Serial.println();
       qtr.readBlackLine();
       for(uint8_t i = 0; i < count; i++) {
         Serial.print(qtr[i]);
         Serial.print(' ');
       }
+      Serial.println();
         delay(1000);
         check_kill_switch();
       }

@@ -4,62 +4,86 @@
 \DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ QTR\_H}}
 \DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ QTR\_H}}
 \DoxyCodeLine{00003\ }
-\DoxyCodeLine{00005\ \textcolor{keyword}{enum\ class}\ Emitter\ \{}
-\DoxyCodeLine{00006\ \ \ \ \ On,}
-\DoxyCodeLine{00007\ \ \ \ \ Off,}
-\DoxyCodeLine{00008\ \ \ \ \ OnAndOff}
-\DoxyCodeLine{00009\ \};}
-\DoxyCodeLine{00010\ }
-\DoxyCodeLine{00012\ \textcolor{keyword}{enum\ class}\ Parity\ \{}
-\DoxyCodeLine{00013\ \ \ \ \ Even,}
-\DoxyCodeLine{00014\ \ \ \ \ Odd,}
-\DoxyCodeLine{00015\ \ \ \ \ EvenAndOdd}
-\DoxyCodeLine{00016\ \};}
-\DoxyCodeLine{00017\ }
-\DoxyCodeLine{00018\ \textcolor{keyword}{class\ }QTR\ \{}
-\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ QTR();}
-\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_ad72c920ae9484c3e7f9573a6fc152ee2}{setTimeout}}(uint32\_t\ timeout);}
-\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a3f50a338cf8414ea1a4fb247e01ddd6b}{setSensorPins}}(uint8\_t*\ pins,\ uint8\_t\ count);}
-\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a2b13154ec657636af2c881dc032c8872}{setEvenEmitter}}(uint8\_t\ pin);}
-\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a741aeba8937aa46d7cc23a11c22a2366}{setOddEmitter}}(uint8\_t\ pin);}
-\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_aee08f22bb2335a8a9234151eba5647eb}{emitterTest}}();}
-\DoxyCodeLine{00027\ }
-\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94}{calibrate}}(uint8\_t\ times,\ Emitter\ e,\ Parity\ p);}
-\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_ad527782b6ddaacf5abc34cd6348424c6}{resetCalibrationStatus}}();}
-\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_ad73864d7fb01d7f6b74a5b232e10c5ae}{readSensors}}(uint32\_t*\ values,\ uint8\_t\ len,\ Emitter\ e,\ Parity\ p);}
-\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a59fe70babcb985ff851f201371bd1b34}{readCalibrated}}(uint32\_t*\ values,\ uint8\_t\ len,\ Emitter\ e,\ Parity\ p);}
-\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \string~QTR();}
+\DoxyCodeLine{00007\ \textcolor{keyword}{enum\ class}\ Emitter\ \{}
+\DoxyCodeLine{00008\ \ \ \ \ On,}
+\DoxyCodeLine{00009\ \ \ \ \ Off,}
+\DoxyCodeLine{00010\ \ \ \ \ OnAndOff}
+\DoxyCodeLine{00011\ \};}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{enum\ class}\ Parity\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ Even,}
+\DoxyCodeLine{00018\ \ \ \ \ Odd,}
+\DoxyCodeLine{00019\ \ \ \ \ EvenAndOdd}
+\DoxyCodeLine{00020\ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_q_t_r_a5774666ca6eb11a96e5e9b6d716cfa09}{QTR}}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_q_t_r_a5774666ca6eb11a96e5e9b6d716cfa09}{QTR}}();}
 \DoxyCodeLine{00033\ }
-\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{comment}{//helper\ function}}
-\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ uint8\_t\ sum(uint8\_t*\ arr,\ uint8\_t\ cnt);}
-\DoxyCodeLine{00036\ }
-\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{comment}{//getters\ and\ setters\ here\ as\ needed}}
-\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ uint32\_t\ getCalMin(\textcolor{keywordtype}{int}\ index);}
-\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ uint32\_t\ getCalMax(\textcolor{keywordtype}{int}\ index);}
-\DoxyCodeLine{00040\ }
-\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ uint8\_t\ count;}
-\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ uint32\_t\ recalibrated;}
-\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ uint32\_t\ maxtime;}
-\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ uint8\_t\ evenEmitter;}
-\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ uint8\_t\ oddEmitter;}
-\DoxyCodeLine{00048\ }
-\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ uint8\_t*\ sensors\ =\ \textcolor{keyword}{nullptr};}
-\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ uint32\_t*\ calmin\ =\ \textcolor{keyword}{nullptr};}
-\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ uint32\_t*\ calmax\ =\ \textcolor{keyword}{nullptr};}
-\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ emittersOn(Parity\ p);\ \textcolor{comment}{//flags\ for\ which\ emitters}}
-\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ emittersOff(Parity\ p);}
-\DoxyCodeLine{00055\ }
-\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ switchEmittersOn(Emitter\ e,\ Parity\ p);}
-\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ switchEmittersOff(Emitter\ e,\ Parity\ p);}
-\DoxyCodeLine{00058\ \};}
-\DoxyCodeLine{00059\ }
-\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_ad72c920ae9484c3e7f9573a6fc152ee2}{setTimeout}}(uint32\_t\ timeout);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a3f50a338cf8414ea1a4fb247e01ddd6b}{setSensorPins}}(uint8\_t*\ pins,\ uint8\_t\ count);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a99bc95ae67e962a578bc8e6d4dbc9a94}{calibrate}}(uint8\_t\ times,\ Emitter\ e,\ Parity\ p);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_ad527782b6ddaacf5abc34cd6348424c6}{resetCalibrationStatus}}();}
 \DoxyCodeLine{00061\ }
-\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_af4149c514037146813ce86c5807f130a}{readSensors}}();}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_af7f0935f0a92221ba41e0fa6eb21cd0c}{readCalibrated}}();}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a070b3705f0c42b234930e087056d7e11}{readBlackLine}}();}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_q_t_r_ac2a90a6cb7ed0b4963cfe45eb65d2d5f}{\string~QTR}}();}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ uint8\_t\ \mbox{\hyperlink{class_q_t_r_a49e007d4d58678b6e144f42c4a87443d}{sum}}(uint8\_t*\ arr,\ uint8\_t\ cnt);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{comment}{//getters\ and\ setters\ here\ as\ needed}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{class_q_t_r_af44d4ef475f3aab25d2ab09666c55b50}{getCalMin}}(\textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{class_q_t_r_a2620c3098d950ecedafa3b1fbdcb08df}{getCalMax}}(\textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{class_q_t_r_a63d87247c1376615c100b8703ef984de}{operator[]}}(\textcolor{keywordtype}{int}\ index)\ \{\textcolor{keywordflow}{return}\ this-\/>readings[index];\};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a2b13154ec657636af2c881dc032c8872}{setEvenEmitter}}(uint8\_t\ pin);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a741aeba8937aa46d7cc23a11c22a2366}{setOddEmitter}}(uint8\_t\ pin);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_q_t_r_a7c971b9534b941233baed872bc0d6e9d}{setThreshold}}(\textcolor{keywordtype}{int}*\ t);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_q_t_r_ab436167d5a2b41096e9762ab6bb35172}{getThreshold}}();}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t*\ \mbox{\hyperlink{class_q_t_r_ad85baf0dabf48e9870d8e9d19832991d}{getReadings}}()\textcolor{keyword}{\ const\ }\{\textcolor{keywordflow}{return}\ this-\/>readings;\};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ threshold\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ uint8\_t\ count;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ uint32\_t\ recalibrated;}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ uint32\_t\ maxtime;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ uint8\_t\ oddEmitter;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ uint8\_t\ evenEmitter;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ Emitter\ em\ =\ Emitter::Off;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ Parity\ pa\ =\ Parity::EvenAndOdd;}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ uint8\_t*\ sensors\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ uint32\_t*\ calmin\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ uint32\_t*\ calmax\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ uint32\_t*\ readings\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ emittersOn(Parity\ p);\ \textcolor{comment}{//flags\ for\ which\ emitters}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ emittersOff(Parity\ p);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ switchEmittersOn(Emitter\ e,\ Parity\ p);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ switchEmittersOff(Emitter\ e,\ Parity\ p);}
+\DoxyCodeLine{00185\ \};}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

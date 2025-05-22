@@ -108,55 +108,529 @@ $(function(){initNavTree('class_q_t_r.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">QTR Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Class to take sensor readings from polulu <a class="el" href="class_q_t_r.html" title="Class to take sensor readings from polulu QTR digital sensor arrays.">QTR</a> digital sensor arrays.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="qtr_8h_source.html">qtr.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad72c920ae9484c3e7f9573a6fc152ee2" id="r_ad72c920ae9484c3e7f9573a6fc152ee2"><td class="memItemLeft" align="right" valign="top"><a id="ad72c920ae9484c3e7f9573a6fc152ee2" name="ad72c920ae9484c3e7f9573a6fc152ee2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setTimeout</b> (uint32_t timeout)</td></tr>
-<tr class="memdesc:ad72c920ae9484c3e7f9573a6fc152ee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the timeout duration in microseconds for our sensor reading. <br /></td></tr>
+<tr class="memitem:a5774666ca6eb11a96e5e9b6d716cfa09" id="r_a5774666ca6eb11a96e5e9b6d716cfa09"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5774666ca6eb11a96e5e9b6d716cfa09">QTR</a> ()</td></tr>
+<tr class="memdesc:a5774666ca6eb11a96e5e9b6d716cfa09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the sensor class.  <br /></td></tr>
+<tr class="separator:a5774666ca6eb11a96e5e9b6d716cfa09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad72c920ae9484c3e7f9573a6fc152ee2" id="r_ad72c920ae9484c3e7f9573a6fc152ee2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad72c920ae9484c3e7f9573a6fc152ee2">setTimeout</a> (uint32_t timeout)</td></tr>
+<tr class="memdesc:ad72c920ae9484c3e7f9573a6fc152ee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set sensor timeout for a maximum reading.  <br /></td></tr>
 <tr class="separator:ad72c920ae9484c3e7f9573a6fc152ee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f50a338cf8414ea1a4fb247e01ddd6b" id="r_a3f50a338cf8414ea1a4fb247e01ddd6b"><td class="memItemLeft" align="right" valign="top"><a id="a3f50a338cf8414ea1a4fb247e01ddd6b" name="a3f50a338cf8414ea1a4fb247e01ddd6b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setSensorPins</b> (uint8_t *pins, uint8_t count)</td></tr>
-<tr class="memdesc:a3f50a338cf8414ea1a4fb247e01ddd6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pin numbers of the sensor array up to the count. No bounds checking so be careful. <br /></td></tr>
+<tr class="memitem:a3f50a338cf8414ea1a4fb247e01ddd6b" id="r_a3f50a338cf8414ea1a4fb247e01ddd6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f50a338cf8414ea1a4fb247e01ddd6b">setSensorPins</a> (uint8_t *pins, uint8_t count)</td></tr>
+<tr class="memdesc:a3f50a338cf8414ea1a4fb247e01ddd6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pins that correlate to the sensor data lines.  <br /></td></tr>
 <tr class="separator:a3f50a338cf8414ea1a4fb247e01ddd6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b13154ec657636af2c881dc032c8872" id="r_a2b13154ec657636af2c881dc032c8872"><td class="memItemLeft" align="right" valign="top"><a id="a2b13154ec657636af2c881dc032c8872" name="a2b13154ec657636af2c881dc032c8872"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setEvenEmitter</b> (uint8_t pin)</td></tr>
-<tr class="memdesc:a2b13154ec657636af2c881dc032c8872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pin number of the even emitter control pin. <br /></td></tr>
-<tr class="separator:a2b13154ec657636af2c881dc032c8872"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a741aeba8937aa46d7cc23a11c22a2366" id="r_a741aeba8937aa46d7cc23a11c22a2366"><td class="memItemLeft" align="right" valign="top"><a id="a741aeba8937aa46d7cc23a11c22a2366" name="a741aeba8937aa46d7cc23a11c22a2366"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setOddEmitter</b> (uint8_t pin)</td></tr>
-<tr class="memdesc:a741aeba8937aa46d7cc23a11c22a2366"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pin number of the odd emitter control pin. <br /></td></tr>
-<tr class="separator:a741aeba8937aa46d7cc23a11c22a2366"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee08f22bb2335a8a9234151eba5647eb" id="r_aee08f22bb2335a8a9234151eba5647eb"><td class="memItemLeft" align="right" valign="top"><a id="aee08f22bb2335a8a9234151eba5647eb" name="aee08f22bb2335a8a9234151eba5647eb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>emitterTest</b> ()</td></tr>
-<tr class="memdesc:aee08f22bb2335a8a9234151eba5647eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the emitters are working. <br /></td></tr>
-<tr class="separator:aee08f22bb2335a8a9234151eba5647eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99bc95ae67e962a578bc8e6d4dbc9a94" id="r_a99bc95ae67e962a578bc8e6d4dbc9a94"><td class="memItemLeft" align="right" valign="top"><a id="a99bc95ae67e962a578bc8e6d4dbc9a94" name="a99bc95ae67e962a578bc8e6d4dbc9a94"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>calibrate</b> (uint8_t times, Emitter e, Parity p)</td></tr>
-<tr class="memdesc:a99bc95ae67e962a578bc8e6d4dbc9a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calibrate the sensor, set e to the status of the emitter, p to choose which emitters are on/off/flashing. <br /></td></tr>
+<tr class="memitem:a99bc95ae67e962a578bc8e6d4dbc9a94" id="r_a99bc95ae67e962a578bc8e6d4dbc9a94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99bc95ae67e962a578bc8e6d4dbc9a94">calibrate</a> (uint8_t times, Emitter e, Parity p)</td></tr>
+<tr class="memdesc:a99bc95ae67e962a578bc8e6d4dbc9a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calibrate the sensor <code>times</code> times with options for emitter.  <br /></td></tr>
 <tr class="separator:a99bc95ae67e962a578bc8e6d4dbc9a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad527782b6ddaacf5abc34cd6348424c6" id="r_ad527782b6ddaacf5abc34cd6348424c6"><td class="memItemLeft" align="right" valign="top"><a id="ad527782b6ddaacf5abc34cd6348424c6" name="ad527782b6ddaacf5abc34cd6348424c6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resetCalibrationStatus</b> ()</td></tr>
-<tr class="memdesc:ad527782b6ddaacf5abc34cd6348424c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the calibration status. Next time <a class="el" href="#a99bc95ae67e962a578bc8e6d4dbc9a94" title="Calibrate the sensor, set e to the status of the emitter, p to choose which emitters are on/off/flash...">calibrate()</a> runs it will start with no max or min values. <br /></td></tr>
+<tr class="memitem:ad527782b6ddaacf5abc34cd6348424c6" id="r_ad527782b6ddaacf5abc34cd6348424c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad527782b6ddaacf5abc34cd6348424c6">resetCalibrationStatus</a> ()</td></tr>
+<tr class="memdesc:ad527782b6ddaacf5abc34cd6348424c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the calibration status, deleting old calibration values.  <br /></td></tr>
 <tr class="separator:ad527782b6ddaacf5abc34cd6348424c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad73864d7fb01d7f6b74a5b232e10c5ae" id="r_ad73864d7fb01d7f6b74a5b232e10c5ae"><td class="memItemLeft" align="right" valign="top"><a id="ad73864d7fb01d7f6b74a5b232e10c5ae" name="ad73864d7fb01d7f6b74a5b232e10c5ae"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readSensors</b> (uint32_t *values, uint8_t len, Emitter e, Parity p)</td></tr>
-<tr class="memdesc:ad73864d7fb01d7f6b74a5b232e10c5ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take raw sensor reading, as time for HIGH to LOW decay. Pass emitter and parity flags. <br /></td></tr>
-<tr class="separator:ad73864d7fb01d7f6b74a5b232e10c5ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59fe70babcb985ff851f201371bd1b34" id="r_a59fe70babcb985ff851f201371bd1b34"><td class="memItemLeft" align="right" valign="top"><a id="a59fe70babcb985ff851f201371bd1b34" name="a59fe70babcb985ff851f201371bd1b34"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readCalibrated</b> (uint32_t *values, uint8_t len, Emitter e, Parity p)</td></tr>
-<tr class="memdesc:a59fe70babcb985ff851f201371bd1b34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scales the readings by calibration values to provide accurate reflectance values. Pass e and p for emitter and parity flags. <br /></td></tr>
-<tr class="separator:a59fe70babcb985ff851f201371bd1b34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49e007d4d58678b6e144f42c4a87443d" id="r_a49e007d4d58678b6e144f42c4a87443d"><td class="memItemLeft" align="right" valign="top"><a id="a49e007d4d58678b6e144f42c4a87443d" name="a49e007d4d58678b6e144f42c4a87443d"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>sum</b> (uint8_t *arr, uint8_t cnt)</td></tr>
+<tr class="memitem:af4149c514037146813ce86c5807f130a" id="r_af4149c514037146813ce86c5807f130a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4149c514037146813ce86c5807f130a">readSensors</a> ()</td></tr>
+<tr class="memdesc:af4149c514037146813ce86c5807f130a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read sensor values as time to discharge sensing circuit.  <br /></td></tr>
+<tr class="separator:af4149c514037146813ce86c5807f130a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7f0935f0a92221ba41e0fa6eb21cd0c" id="r_af7f0935f0a92221ba41e0fa6eb21cd0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7f0935f0a92221ba41e0fa6eb21cd0c">readCalibrated</a> ()</td></tr>
+<tr class="memdesc:af7f0935f0a92221ba41e0fa6eb21cd0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read sensor values and scale by calibration constants.  <br /></td></tr>
+<tr class="separator:af7f0935f0a92221ba41e0fa6eb21cd0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a070b3705f0c42b234930e087056d7e11" id="r_a070b3705f0c42b234930e087056d7e11"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a070b3705f0c42b234930e087056d7e11">readBlackLine</a> ()</td></tr>
+<tr class="memdesc:a070b3705f0c42b234930e087056d7e11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read calibrated values and convert to black line reading.  <br /></td></tr>
+<tr class="separator:a070b3705f0c42b234930e087056d7e11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2a90a6cb7ed0b4963cfe45eb65d2d5f" id="r_ac2a90a6cb7ed0b4963cfe45eb65d2d5f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2a90a6cb7ed0b4963cfe45eb65d2d5f">~QTR</a> ()</td></tr>
+<tr class="memdesc:ac2a90a6cb7ed0b4963cfe45eb65d2d5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deallocate all heap memory.  <br /></td></tr>
+<tr class="separator:ac2a90a6cb7ed0b4963cfe45eb65d2d5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49e007d4d58678b6e144f42c4a87443d" id="r_a49e007d4d58678b6e144f42c4a87443d"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49e007d4d58678b6e144f42c4a87443d">sum</a> (uint8_t *arr, uint8_t cnt)</td></tr>
+<tr class="memdesc:a49e007d4d58678b6e144f42c4a87443d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum an array of uint8_t, used in <code>function</code>  <br /></td></tr>
 <tr class="separator:a49e007d4d58678b6e144f42c4a87443d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af44d4ef475f3aab25d2ab09666c55b50" id="r_af44d4ef475f3aab25d2ab09666c55b50"><td class="memItemLeft" align="right" valign="top"><a id="af44d4ef475f3aab25d2ab09666c55b50" name="af44d4ef475f3aab25d2ab09666c55b50"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getCalMin</b> (int index)</td></tr>
+<tr class="memitem:af44d4ef475f3aab25d2ab09666c55b50" id="r_af44d4ef475f3aab25d2ab09666c55b50"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af44d4ef475f3aab25d2ab09666c55b50">getCalMin</a> (int index)</td></tr>
+<tr class="memdesc:af44d4ef475f3aab25d2ab09666c55b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the max value for the nth sensor in the array determined from calibration.  <br /></td></tr>
 <tr class="separator:af44d4ef475f3aab25d2ab09666c55b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2620c3098d950ecedafa3b1fbdcb08df" id="r_a2620c3098d950ecedafa3b1fbdcb08df"><td class="memItemLeft" align="right" valign="top"><a id="a2620c3098d950ecedafa3b1fbdcb08df" name="a2620c3098d950ecedafa3b1fbdcb08df"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getCalMax</b> (int index)</td></tr>
+<tr class="memitem:a2620c3098d950ecedafa3b1fbdcb08df" id="r_a2620c3098d950ecedafa3b1fbdcb08df"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2620c3098d950ecedafa3b1fbdcb08df">getCalMax</a> (int index)</td></tr>
+<tr class="memdesc:a2620c3098d950ecedafa3b1fbdcb08df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the min value for the nth sensor in the array determined from calibration.  <br /></td></tr>
 <tr class="separator:a2620c3098d950ecedafa3b1fbdcb08df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63d87247c1376615c100b8703ef984de" id="r_a63d87247c1376615c100b8703ef984de"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63d87247c1376615c100b8703ef984de">operator[]</a> (int index)</td></tr>
+<tr class="memdesc:a63d87247c1376615c100b8703ef984de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the last read value of the nth sensor in the array.  <br /></td></tr>
+<tr class="separator:a63d87247c1376615c100b8703ef984de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b13154ec657636af2c881dc032c8872" id="r_a2b13154ec657636af2c881dc032c8872"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b13154ec657636af2c881dc032c8872">setEvenEmitter</a> (uint8_t pin)</td></tr>
+<tr class="memdesc:a2b13154ec657636af2c881dc032c8872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the pin for controlling the even numbered emitters.  <br /></td></tr>
+<tr class="separator:a2b13154ec657636af2c881dc032c8872"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a741aeba8937aa46d7cc23a11c22a2366" id="r_a741aeba8937aa46d7cc23a11c22a2366"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a741aeba8937aa46d7cc23a11c22a2366">setOddEmitter</a> (uint8_t pin)</td></tr>
+<tr class="memdesc:a741aeba8937aa46d7cc23a11c22a2366"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the pin for controlling the odd numbered emitters.  <br /></td></tr>
+<tr class="separator:a741aeba8937aa46d7cc23a11c22a2366"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c971b9534b941233baed872bc0d6e9d" id="r_a7c971b9534b941233baed872bc0d6e9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c971b9534b941233baed872bc0d6e9d">setThreshold</a> (int *t)</td></tr>
+<tr class="memdesc:a7c971b9534b941233baed872bc0d6e9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pointer to the threshold from a calibrated reading for black line detection.  <br /></td></tr>
+<tr class="separator:a7c971b9534b941233baed872bc0d6e9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab436167d5a2b41096e9762ab6bb35172" id="r_ab436167d5a2b41096e9762ab6bb35172"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab436167d5a2b41096e9762ab6bb35172">getThreshold</a> ()</td></tr>
+<tr class="memdesc:ab436167d5a2b41096e9762ab6bb35172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the threshold value for this sensor array.  <br /></td></tr>
+<tr class="separator:ab436167d5a2b41096e9762ab6bb35172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad85baf0dabf48e9870d8e9d19832991d" id="r_ad85baf0dabf48e9870d8e9d19832991d"><td class="memItemLeft" align="right" valign="top">const uint32_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad85baf0dabf48e9870d8e9d19832991d">getReadings</a> () const</td></tr>
+<tr class="memdesc:ad85baf0dabf48e9870d8e9d19832991d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a read only view of the whole readings array.  <br /></td></tr>
+<tr class="separator:ad85baf0dabf48e9870d8e9d19832991d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Class to take sensor readings from polulu <a class="el" href="class_q_t_r.html" title="Class to take sensor readings from polulu QTR digital sensor arrays.">QTR</a> digital sensor arrays. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a5774666ca6eb11a96e5e9b6d716cfa09" name="a5774666ca6eb11a96e5e9b6d716cfa09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5774666ca6eb11a96e5e9b6d716cfa09">&#9670;&#160;</a></span>QTR()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QTR::QTR </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructor for the sensor class. </p>
+<dl class="section user"><dt>Parameters</dt><dd>None.</dd></dl>
+<p>Sets the calibration status to 0 </p>
+
+</div>
+</div>
+<a id="ac2a90a6cb7ed0b4963cfe45eb65d2d5f" name="ac2a90a6cb7ed0b4963cfe45eb65d2d5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2a90a6cb7ed0b4963cfe45eb65d2d5f">&#9670;&#160;</a></span>~QTR()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QTR::~QTR </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Deallocate all heap memory. </p>
+<dl class="section user"><dt>Parameters</dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a99bc95ae67e962a578bc8e6d4dbc9a94" name="a99bc95ae67e962a578bc8e6d4dbc9a94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99bc95ae67e962a578bc8e6d4dbc9a94">&#9670;&#160;</a></span>calibrate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::calibrate </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>times</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Emitter</td>          <td class="paramname"><span class="paramname"><em>e</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Parity</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calibrate the sensor <code>times</code> times with options for emitter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">times</td><td>Number of times to read the sensor for calibration </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e</td><td>The status of the emitters </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td>The selection of even/odd emitters</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Calibrate the sensor by finding the maximum and minimum of a set of values. Taking <code>times</code> sensor readings that hopefully have different results to provide a large range between max and min. Can specify whether the emitters will be on or off during the calibration, and until recalibration is set this is the only way to change which emitters are set to ensure continuity of readings </p>
+
+</div>
+</div>
+<a id="a2620c3098d950ecedafa3b1fbdcb08df" name="a2620c3098d950ecedafa3b1fbdcb08df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2620c3098d950ecedafa3b1fbdcb08df">&#9670;&#160;</a></span>getCalMax()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t QTR::getCalMax </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the min value for the nth sensor in the array determined from calibration. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>index into the array of sensors we are getting the calibrated max of </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af44d4ef475f3aab25d2ab09666c55b50" name="af44d4ef475f3aab25d2ab09666c55b50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af44d4ef475f3aab25d2ab09666c55b50">&#9670;&#160;</a></span>getCalMin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t QTR::getCalMin </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the max value for the nth sensor in the array determined from calibration. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>index into the array of sensors we are getting the calibrated min of </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad85baf0dabf48e9870d8e9d19832991d" name="ad85baf0dabf48e9870d8e9d19832991d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad85baf0dabf48e9870d8e9d19832991d">&#9670;&#160;</a></span>getReadings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint32_t * QTR::getReadings </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a read only view of the whole readings array. </p>
+<dl class="section user"><dt>Parameters</dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a id="ab436167d5a2b41096e9762ab6bb35172" name="ab436167d5a2b41096e9762ab6bb35172"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab436167d5a2b41096e9762ab6bb35172">&#9670;&#160;</a></span>getThreshold()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int QTR::getThreshold </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the threshold value for this sensor array. </p>
+<dl class="section user"><dt>Parameters</dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a id="a63d87247c1376615c100b8703ef984de" name="a63d87247c1376615c100b8703ef984de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63d87247c1376615c100b8703ef984de">&#9670;&#160;</a></span>operator[]()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t QTR::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the last read value of the nth sensor in the array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>index of the sensor we want to take reading of</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Returns a copy of the reading at <code>index</code>, based on the last read function that was called If <code><a class="el" href="#af7f0935f0a92221ba41e0fa6eb21cd0c" title="Read sensor values and scale by calibration constants.">readCalibrated()</a></code> or <code><a class="el" href="#af4149c514037146813ce86c5807f130a" title="Read sensor values as time to discharge sensing circuit.">readSensors()</a></code> was called last, readings can be any integers. If <code><a class="el" href="#a070b3705f0c42b234930e087056d7e11" title="Read calibrated values and convert to black line reading.">readBlackLine()</a></code> was last called, readings will be 1 or 0 </p>
+
+</div>
+</div>
+<a id="a070b3705f0c42b234930e087056d7e11" name="a070b3705f0c42b234930e087056d7e11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a070b3705f0c42b234930e087056d7e11">&#9670;&#160;</a></span>readBlackLine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::readBlackLine </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read calibrated values and convert to black line reading. </p>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">1</td><td>sensor over black line </td></tr>
+    <tr><td class="paramname">0</td><td>sensor not over black line </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af7f0935f0a92221ba41e0fa6eb21cd0c" name="af7f0935f0a92221ba41e0fa6eb21cd0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7f0935f0a92221ba41e0fa6eb21cd0c">&#9670;&#160;</a></span>readCalibrated()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::readCalibrated </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read sensor values and scale by calibration constants. </p>
+<dl class="section user"><dt>Parameters</dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a id="af4149c514037146813ce86c5807f130a" name="af4149c514037146813ce86c5807f130a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4149c514037146813ce86c5807f130a">&#9670;&#160;</a></span>readSensors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::readSensors </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read sensor values as time to discharge sensing circuit. </p>
+<dl class="section user"><dt>Parameters</dt><dd>None.</dd></dl>
+<p>Read the sensors by setting the circuits to <code>HIGH</code>, waiting 10 microseconds and then timing how long it takes to discharge to low. Does not use <code>noInterrupts()</code> as the Arduino GIGA crashes. Provides a raw value that needs calibration to be useful </p>
+
+</div>
+</div>
+<a id="ad527782b6ddaacf5abc34cd6348424c6" name="ad527782b6ddaacf5abc34cd6348424c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad527782b6ddaacf5abc34cd6348424c6">&#9670;&#160;</a></span>resetCalibrationStatus()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::resetCalibrationStatus </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset the calibration status, deleting old calibration values. </p>
+<dl class="section user"><dt>Parameters</dt><dd>None.</dd></dl>
+<p>Sets the calibration status to 0. This allows for a "fresh" calibration, which ignores any previously calibrated maximum and minimum values </p>
+
+</div>
+</div>
+<a id="a2b13154ec657636af2c881dc032c8872" name="a2b13154ec657636af2c881dc032c8872"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b13154ec657636af2c881dc032c8872">&#9670;&#160;</a></span>setEvenEmitter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::setEvenEmitter </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>pin</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the pin for controlling the even numbered emitters. </p>
+<p>Set the pin number of the even emitter control pin.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pin</td><td>number assigned to the pin connected to the even emitters </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a741aeba8937aa46d7cc23a11c22a2366" name="a741aeba8937aa46d7cc23a11c22a2366"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a741aeba8937aa46d7cc23a11c22a2366">&#9670;&#160;</a></span>setOddEmitter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::setOddEmitter </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>pin</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the pin for controlling the odd numbered emitters. </p>
+<p>Set the pin number of the odd emitter control pin.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pin</td><td>number assigned to the pin connected to the odd emitters </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3f50a338cf8414ea1a4fb247e01ddd6b" name="a3f50a338cf8414ea1a4fb247e01ddd6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f50a338cf8414ea1a4fb247e01ddd6b">&#9670;&#160;</a></span>setSensorPins()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::setSensorPins </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>pins</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the pins that correlate to the sensor data lines. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pins</td><td>An array of pin numbers </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>The number of pins</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sets the count and pins of the sensor, with no bounds checking </p>
+
+</div>
+</div>
+<a id="a7c971b9534b941233baed872bc0d6e9d" name="a7c971b9534b941233baed872bc0d6e9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c971b9534b941233baed872bc0d6e9d">&#9670;&#160;</a></span>setThreshold()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::setThreshold </td>
+          <td>(</td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>t</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the pointer to the threshold from a calibrated reading for black line detection. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>the pointer to the variable the threshold is stored in </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad72c920ae9484c3e7f9573a6fc152ee2" name="ad72c920ae9484c3e7f9573a6fc152ee2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad72c920ae9484c3e7f9573a6fc152ee2">&#9670;&#160;</a></span>setTimeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QTR::setTimeout </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>timeout</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set sensor timeout for a maximum reading. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">timeout</td><td>The timeout in microseconds</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sets the maxtime field to the <code>timeout</code> specified. If a sensor doesn't discharge after this length of time, then this is the default sensor reading value </p>
+
+</div>
+</div>
+<a id="a49e007d4d58678b6e144f42c4a87443d" name="a49e007d4d58678b6e144f42c4a87443d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49e007d4d58678b6e144f42c4a87443d">&#9670;&#160;</a></span>sum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t QTR::sum </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>arr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>cnt</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sum an array of uint8_t, used in <code>function</code> </p>
+<dl class="section user"><dt>Parameters</dt><dd>None. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="qtr_8h_source.html">qtr.h</a></li>
 <li><b>qtr.cpp</b></li>
