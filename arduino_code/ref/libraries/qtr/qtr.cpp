@@ -116,6 +116,10 @@ void QTR::calibrate(uint8_t times, Emitter e, Parity p) {
 		}
 	}
 
+	if(maxmax > this->maxtime) {
+		maxmax = this->maxtime;
+	}
+
 	for(int i = 0; i < this->count; ++i) {
 		this->calmax[i] = maxmax;
 		this->calmin[i] = minmin;
@@ -179,11 +183,17 @@ void QTR::readSensors() {
 }
 
 void QTR::readCalibrated() {
+	float temp = 0;
 	this->readSensors();
 	for(int i = 0; i < this->count; ++i) {
 		uint32_t invscale = this->calmax[i] - this->calmin[i];
-		this->readings[i] = this->readings[i]*100/invscale; //set to autocalibrate between 0 and 1024
-	}	
+		Serial.print("Inv: ");
+		Serial.print(invscale);
+		Serial.print(" ");
+		temp = this->readings[i]*100/invscale; //set to autocalibrate between 0 and 1024
+		this->readings[i] = (uint32_t)temp;
+	}
+	Serial.println(this->readings[0]);
 
 	//average sensor readings to filter noise
 
