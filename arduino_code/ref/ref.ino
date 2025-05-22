@@ -223,6 +223,23 @@ void loop() {
   while (Serial.available() > 0) {
     incomingByte = Serial.read();
     if(c == -1) {
+      if(incomingByte > 58) {
+        char command = incomingByte;
+        String f = Serial.readString();
+        float k = f.toFloat()/100;
+        Serial.print("K: ");
+        Serial.println(k);
+        if(command == 'p') {
+          kp = k;
+        }
+        if(command == 'i') {
+          ki = k;
+        }
+        if(command == 'd') {
+          kd = k;
+        }
+        break;
+      }
       idx = incomingByte-48;
       ++c;
       continue;
@@ -259,18 +276,6 @@ void loop() {
   Serial.println();
   Serial.println("=================");
   
-  for(int i = 0; i < 3; ++i) {
-    std::string nums = "";
-    for(int j = 0; j < count; ++j) {
-      nums += std::to_string(qtrs[i][j]);
-      nums += " ";
-    }
-    Serial.println(nums.c_str());
-    Udp.beginPacket("10.224.62.49",2300);
-    Udp.write(nums.c_str(),nums.length());
-    Udp.endPacket();
-  }
-  
   
   qtrs[0].readBlackLine();
   for(uint8_t i = 0; i < count; i++) {
@@ -291,5 +296,18 @@ void loop() {
   }
   Serial.println();
   Serial.println("=================");
+
+  for(int i = 0; i < 3; ++i) {
+    std::string nums = "";
+    for(int j = 0; j < count; ++j) {
+      nums += std::to_string(qtrs[i][j]);
+      nums += " ";
+    }
+    Serial.println(nums.c_str());
+    Udp.beginPacket("10.224.62.49",2300);
+    Udp.write(nums.c_str(),nums.length());
+    Udp.endPacket();
+  }
+  
   PID(3);
 }
