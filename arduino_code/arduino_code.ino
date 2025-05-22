@@ -141,6 +141,16 @@ void shutdown(){
   Serial.println("Finished");
 }
 
+/// @brief lowers the line following sensors
+void lower_arm(){
+  sensor_servo.write(50);
+}
+
+/// @brief raises the line following sensors
+void raise_arm(){
+  sensor_servo.write(5);
+}
+
 /// @brief sets the motors to the correct PWMs
 /// @param left percentage speed for left motors
 /// @param right percentage speed for right motors
@@ -165,13 +175,13 @@ void move(int left, int right){
   back_left_speed = round(left / 100 * MAX_BACK_PWM);
   back_right_speed = round(right / 100 * MAX_BACK_PWM);
 
-  // mdL.setSpeed(1, front_left_speed);
-  // mdL.setSpeed(2, front_left_speed);
-  // mdL.setSpeed(3, back_left_speed);
+  mdL.setSpeed(1, front_left_speed);
+  mdL.setSpeed(2, front_left_speed);
+  mdL.setSpeed(3, back_left_speed);
 
-  // mdR.setSpeed(1, front_right_speed);
-  // mdR.setSpeed(2, front_right_speed);
-  // mdR.setSpeed(3, back_right_speed);
+  mdR.setSpeed(1, front_right_speed);
+  mdR.setSpeed(2, front_right_speed);
+  mdR.setSpeed(3, back_right_speed);
 }
 
 void check_stuck(){
@@ -194,6 +204,9 @@ void check_stuck(){
 bool line_following(){
   bool following = true;
   int t = 0;
+
+  lower_arm();
+
   while (following){
     //tim tim please implement :)
     ++t;
@@ -202,6 +215,8 @@ bool line_following(){
     }
     check_kill_switch();
   }
+
+  raise_arm();
 
   //only return true once the section has been completed
   return true;
@@ -213,6 +228,8 @@ bool wall_following(){
   right_speed = BASE_SPEED;
 
   bool following = true;
+
+  raise_arm();
 
   while (following){
     front_distance = frontIR.getDistance();
@@ -318,8 +335,23 @@ void setup(){
     mdL.setMaxDeceleration(i,300);  
   }
 
-  Serial.println("Attaching Servos!");
+  Serial.println("Attaching Servos...");
   sensor_servo.attach(SERVO_PIN);
+  Serial.println("Servos Attached!");
+
+
+  Serial.println("Initialising Line Following Sensors...")
+
+  qtr.setTimeout(1000);
+  uint8_t sensors[count] = {36,38,40,42,44,46,48,50,52};
+  qtr.setSensorPins(sensors,count);
+
+  for(uint16_t i = 0; i < 20; i++){
+    qtr.calibrate(10, Emitter::Off, Parity::EvenAndOdd);
+    delay(500);
+  }
+
+  Serial.println("Line Following Sensors Connected!");
 
   Serial.println("Initialisation completed!");
 
@@ -332,17 +364,13 @@ void setup(){
     Serial.println(button_not_pressed);
   }
 
-  Serial.println("Starting main sequence");
+  
 
-  qtr.setTimeout(1000);
-  uint8_t sensors[count] = {36,38,40,42,44,46,48,50,52};
-  qtr.setSensorPins(sensors,count);
+  Serial.println("Starting main sequence");
 }
 
 void loop(){
   bool finished = false;
-
-  
 
   switch (current_section)
   {
@@ -360,27 +388,16 @@ void loop(){
       mdL.setSpeed(3,800);
       mdR.setSpeed(3,800);
       delay(5000);
-      for(int i = 0; i < 2; ++i) {
-        mdL.setSpeed(i,-600);
-        mdR.setSpeed(i,-600);
-      }
-      mdL.setSpeed(3,-800);
-      mdR.setSpeed(3,-800);
+      
+      move(-100, -100);
       delay(5000);
-      for(int i = 0; i < 2; ++i) {
-        mdL.setSpeed(i,0);
-        mdR.setSpeed(i,600);
-      }
-      mdL.setSpeed(3,0);
-      mdR.setSpeed(3,800);
+
+      move(-100, 100);
       delay(5000);
-      for(int i = 0; i < 2; ++i) {
-        mdL.setSpeed(i,600);
-        mdR.setSpeed(i,0);
-      }
-      mdL.setSpeed(3,800);
-      mdR.setSpeed(3,0);
-      delay(5000);*/
+
+      move(100, -100);
+      delay(5000);
+
       finished = line_following();
       break;
 
