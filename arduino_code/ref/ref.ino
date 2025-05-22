@@ -156,7 +156,7 @@ void setup() {
 
   Serial.println("Hello");
   for(int i = 0; i < 3; ++i) {
-    qtrs[i].setTimeout(700);
+    qtrs[i].setTimeout(600);
     qtrs[i].setSensorPins(sensors[i],count);
     qtrs[i].setThreshold(&blackthresholds[i]);
   }

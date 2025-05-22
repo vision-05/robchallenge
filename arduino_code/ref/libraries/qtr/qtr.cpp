@@ -183,17 +183,12 @@ void QTR::readSensors() {
 }
 
 void QTR::readCalibrated() {
-	float temp = 0;
 	this->readSensors();
 	for(int i = 0; i < this->count; ++i) {
 		uint32_t invscale = this->calmax[i] - this->calmin[i];
-		Serial.print("Inv: ");
-		Serial.print(invscale);
-		Serial.print(" ");
-		temp = this->readings[i]*100/invscale; //set to autocalibrate between 0 and 1024
-		this->readings[i] = (uint32_t)temp;
+		this->readings[i] = this->readings[i]*100/invscale; //set to autocalibrate between 0 and 1024
+		
 	}
-	Serial.println(this->readings[0]);
 
 	//average sensor readings to filter noise
 
