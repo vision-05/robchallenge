@@ -27,11 +27,12 @@ uint8_t sensors[3][count] = {{22,24,26,28,30,32,34,36,38},
                              {23,25,27,29,31,33,35,37,39},
                              {42,43,44,45,46,47,48,49,50}};
 
-float kp = 0.06; //allow for changing over serial
-float kd = 0.0075;
-float ki = 0;//0.004;
+//allow for changing over serial
+float kp = 0.04f; //p225
+float kd = 0.0f; //d5
+float ki = 0.0f;//i0.1;
 
-int blackthresholds[3] = {250,250,250};
+int blackthresholds[3] = {5,5,5};
 const float samplet = 0.3;
 constexpr float invSamplet = 1/0.3;
 constexpr float invCount = 1/9;
@@ -89,6 +90,11 @@ void PID(float velocity) {
     float mie = (ie[0] + ie[1] + ie[2])*invArrayCount;
 
     float dtheta = -kp*mpe + kd*mde + ki*mie;
+
+    // if (dtheta < 0.05f){
+    //   dtheta = 0;
+    // }
+
     Serial.print("DTheta ");
     Serial.print(dtheta);
     Serial.println();
@@ -99,8 +105,18 @@ void PID(float velocity) {
     
     //inverse kinematics
 
-    float phiL = (velocity*invRadius) - halfwidth * (omega*invRadius);
-    float phiR = (velocity*invRadius) + halfwidth * (omega*invRadius);
+    float phiL = (velocity*invRadius) - (omega*invRadius*0.3);
+    float phiR = (velocity*invRadius) + (omega*invRadius*0.3);
+
+
+    if (phiL < 0.7 && phiR < 0.7){
+      phiL = phiL * 1.8;
+      phiR = phiR * 1.8;
+    }
+    else {
+      phiL = phiL * 1.25;
+      phiR = phiR * 1.25;
+    }
 
     Serial.print("PhiL: ");
     Serial.print(phiL);
@@ -110,11 +126,11 @@ void PID(float velocity) {
 
     //run motors
 
-    mdL.setSpeed(1,-700*phiL);
-    mdL.setSpeed(3,-700*phiL);
+    mdL.setSpeed(1,250 + 800*phiL);
+    mdL.setSpeed(3,250 + 800*phiL);
 
-    mdR.setSpeed(1,-700*phiR);
-    mdR.setSpeed(3,-700*phiR);
+    mdR.setSpeed(1,-250 - 800*phiR);
+    mdR.setSpeed(3,-250 - 800*phiR);
 
     //set prev errors for next loop
     for(int i = 0; i < 3; ++i) {
@@ -122,7 +138,7 @@ void PID(float velocity) {
         prevErrors[i][j] = errors[i][j];
       }
     }
-    delay(300);
+    delay(200);
 }
 
 void setupUDP() {
@@ -309,5 +325,5 @@ void loop() {
     Udp.endPacket();
   }
   
-  PID(3);
+  PID(2);
 }
