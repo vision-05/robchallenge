@@ -184,6 +184,12 @@ void QTR::readCalibrated() {
 		uint32_t invscale = this->calmax[i] - this->calmin[i];
 		this->readings[i] = this->readings[i]*100/invscale; //set to autocalibrate between 0 and 1024
 	}	
+
+	//average sensor readings to filter noise
+
+	for(int i = 1; i < this->count -1; ++i) {
+		this->readings[i] = (this->readings[i-1] + this->readings[i] + this->readings[i+1])*0.333;
+	}
 }
 
 void QTR::readBlackLine() {
