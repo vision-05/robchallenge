@@ -17,7 +17,7 @@
 QTR qtr;
 
 MotoronI2C mdL(15);
-MotoronI2C mdR(16);
+MotoronI2C mdR(17);
 
 Servo sensor_servo;
 
@@ -30,7 +30,6 @@ SharpIR rightIR(RIGHT_IR_PIN, IR_MODEL);
 SharpIR downIR(DOWN_IR_PIN, IR_MODEL);
 
 int count = 9;
-
 
 int left_speed = 0; //percentage for left speed -100% to 100%
 int right_speed = 0; //percentage for right speed -100% to 100%
@@ -160,18 +159,39 @@ void move(int left, int right){
 
   //implement setting the PWMs for all 6 wheels
 
-  front_left_speed = round(left / 100 * MAX_FRONT_PWM);
-  front_right_speed = round(right / 100 * MAX_FRONT_PWM);
-  back_left_speed = round(left / 100 * MAX_BACK_PWM);
-  back_right_speed = round(right / 100 * MAX_BACK_PWM);
+  front_left_speed = round((float)left / 100 * MAX_FRONT_PWM);
+  front_right_speed = round((float)right / 100 * MAX_FRONT_PWM);
+  back_left_speed = round((float)left / 100 * MAX_BACK_PWM);
+  back_right_speed = round((float)right / 100 * MAX_BACK_PWM);
 
-  // mdL.setSpeed(1, front_left_speed);
-  // mdL.setSpeed(2, front_left_speed);
-  // mdL.setSpeed(3, back_left_speed);
+  //Used for debugging PWMs for left and right wheels
+  // Serial.println("Speeds:");
+  // Serial.println(front_left_speed);
+  // Serial.println(front_right_speed);
+  // Serial.println(back_left_speed);
+  // Serial.println(back_right_speed);
 
-  // mdR.setSpeed(1, front_right_speed);
-  // mdR.setSpeed(2, front_right_speed);
-  // mdR.setSpeed(3, back_right_speed);
+  mdL.setSpeed(1, -front_left_speed);
+  mdL.setSpeed(2, -front_left_speed);
+  mdL.setSpeed(3, back_left_speed);
+
+  mdR.setSpeed(1, front_right_speed);
+  mdR.setSpeed(2, front_right_speed);
+  mdR.setSpeed(3, back_right_speed);
+}
+
+/// @brief Hard coded 90 degree left turn using timings
+void turn_left(){
+  move(-50,50);
+  delay(400);
+  move(0,0);
+}
+
+/// @brief Hard coded 90 degree right turn using timings
+void turn_right(){
+  move(50,-50);
+  delay(400);
+  move(0,0);
 }
 
 void check_stuck(){
@@ -209,37 +229,68 @@ bool line_following(){
 
 
 bool wall_following(){
-  left_speed = BASE_SPEED;
-  right_speed = BASE_SPEED;
-
   bool following = true;
+
+  float error = 0.0f;
+  float previous_error = 0.0f;
+  float sum_error = 0.0f;
+  float gradient_error = 0.0f;
+  float control_signal = 0.0f;
+
+  const float Kp = 1.5f;
+  const float Ki = 0.2f;
+  const float Kd = 0.4f;
+
+  int left = 0;
+  int right = 0;
+
 
   while (following){
     front_distance = frontIR.getDistance();
     left_distance = leftIR.getDistance();
     right_distance = rightIR.getDistance();
     down_distance = downIR.getDistance();
+
     
+    error = left_distance - right_distance;
 
-    //change to PID controller if needed
-    if (left_distance - right_distance > 10){
-      left_speed = left_speed - 1;
-      right_speed = right_speed + 1;
-    }
-    else if (right_distance - left_distance > 10){
-      left_speed = left_speed + 1;
-      right_speed = right_speed - 1;
-    }
+    gradient_error = error - previous_error;
 
-    if (front_distance < 50){
+    sum_error = sum_error + error;
+
+    control_signal = floor(Kp * error + Ki * sum_error + Kd * gradient_error);
+
+    previous_error = error;
+
+    left = BASE_SPEED - control_signal;
+    right = BASE_SPEED + control_signal;
+
+    //avoiding head on collision
+    if (front_distance < 40){
       move(0,0);
+      delay(200);
+
+      //if approac a wall in front, if the left wall is 5cm further away than the right assume 90 degree left turn and vice versa for right
+      if (left_distance > right_distance + 50){
+        turn_left();
+        //continue moving forward so that moved out of the corner and will properly detect the distances to the walls.
+        move(BASE_SPEED,BASE_SPEED);
+        delay(1000);
+
+      } else if (right_distance > left_distance + 50){
+        turn_right();
+        
+        move(BASE_SPEED,BASE_SPEED);
+        delay(1000);
+      }
     } else {
-      move(left_speed, right_speed);
+      move(left, right);
     }
 
     check_kill_switch();
     check_stuck();
     delay(50); //small delay to allow motors to move robot before overeacting
+
   }
 
   return true;
@@ -341,7 +392,7 @@ void setup(){
 
 void loop(){
   bool finished = false;
-
+  String input_string = "";
   
 
   switch (current_section)
@@ -352,41 +403,39 @@ void loop(){
         delay(500);
       }
       
-
-      /*for(int i = 0; i < 3; ++i) {
-        mdL.setSpeed(i,600);
-        mdR.setSpeed(i,600);
-      }
-      mdL.setSpeed(3,800);
-      mdR.setSpeed(3,800);
-      delay(5000);
-      for(int i = 0; i < 2; ++i) {
-        mdL.setSpeed(i,-600);
-        mdR.setSpeed(i,-600);
-      }
-      mdL.setSpeed(3,-800);
-      mdR.setSpeed(3,-800);
-      delay(5000);
-      for(int i = 0; i < 2; ++i) {
-        mdL.setSpeed(i,0);
-        mdR.setSpeed(i,600);
-      }
-      mdL.setSpeed(3,0);
-      mdR.setSpeed(3,800);
-      delay(5000);
-      for(int i = 0; i < 2; ++i) {
-        mdL.setSpeed(i,600);
-        mdR.setSpeed(i,0);
-      }
-      mdL.setSpeed(3,800);
-      mdR.setSpeed(3,0);
-      delay(5000);*/
       finished = line_following();
       break;
 
     case WALL_FOLLOW:
       finished = wall_following();
       break;
+
+    case TESTING:
+      char direction;
+      int speed;
+       // To hold incoming data
+
+      input_string = Serial.readString();
+
+      if (input_string.length() > 1) {
+        direction = input_string.charAt(0); // L or R
+        String number = input_string.substring(1);
+        speed = number.toInt(); // Convert to integer
+
+        if (direction == 'L'){
+          left_speed = speed;
+        } else if (direction == 'R'){
+          right_speed = speed;
+        }
+
+        Serial.print("L: ");
+        Serial.print(left_speed);
+        Serial.print(" R: ");
+        Serial.println(right_speed);
+      }
+
+      move(left_speed, right_speed);
+
     
     default:
       break;

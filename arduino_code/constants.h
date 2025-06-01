@@ -26,12 +26,13 @@ enum Section{
     LUNAR_SURFACE,
     GIANTS_CAUSEWAY,
     ZIPLINE,
+    TESTING
 };
 
-const Section section_order[] = {Section::LINE_FOLLOW};
+const Section section_order[] = {Section::TESTING};
 
 const int BASE_SPEED = 50; //base speed of robot as percentage
 
-const int MAX_FRONT_PWM = 800;
+const int MAX_FRONT_PWM = 700;
 const int MAX_BACK_PWM = 800;
 const int NUM_SENSOR_AVG = 5; //number of times to read average of distance sensor to reduce noise

@@ -30,7 +30,7 @@ uint8_t sensors[3][count] = {{22,24,26,28,30,32,34,36,38},
 //allow for changing over serial
 float kp = 0.04f; //p225
 float kd = 0.0f; //d5
-float ki = 0.0f;//i0.1;
+float ki = 0.0f;//i0.1
 
 int blackthresholds[3] = {5,5,5};
 const float samplet = 0.3;
