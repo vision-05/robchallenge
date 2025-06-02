@@ -10,8 +10,6 @@
 
 #include "constants.h"
 
-QTR qtr;
-
 MotoronI2C mdL(15);
 MotoronI2C mdR(17);
 
@@ -394,7 +392,7 @@ void move(int left, int right){
 
   mdR.setSpeed(1, front_right_speed);
   mdR.setSpeed(2, front_right_speed);
-  mdR.setSpeed(3, back_right_speed);
+  mdR.setSpeed(3, -back_right_speed);
 }
 
 void check_stuck(){
@@ -418,6 +416,27 @@ void PID(float velocity) {
     float errors[3][count] = {{-12,-9,-6,-3,0,3,6,9,12},
                               {-8,-6,-4,-2,0,2,4,6,8},
                               {-4,-3,-2,-1,0,1,2,3,4}};
+
+    //if either of left two and either of right two and no middle then
+    if ((qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) && (qtrs[0][0] || qtrs[0][1] || qtrs[0][2]) && qtrs[0][4] && (qtrs[0][3] || qtrs[0][5])){
+      //turn left, then go forwards briefly
+      move(-BASE_SPEED, BASE_SPEED);
+      delay(500);
+
+      move(BASE_SPEED, BASE_SPEED);
+      delay(300);
+    }
+
+    if (frontIR.getDistance() < 40){
+      move(-BASE_SPEED, -BASE_SPEED);
+      delay(500);
+
+      move(BASE_SPEED, -BASE_SPEED);
+      delay(500);
+
+      move(BASE_SPEED, BASE_SPEED);
+      delay(300);
+    }
 
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < count; ++j) {
@@ -486,12 +505,7 @@ void PID(float velocity) {
     Serial.println();
 
     //run motors
-
-    mdL.setSpeed(1,250 + 800*phiL);
-    mdL.setSpeed(3,250 + 800*phiL);
-
-    mdR.setSpeed(1,-250 - 800*phiR);
-    mdR.setSpeed(3,-250 - 800*phiR);
+    move(250 + 800 * phiL, 250 + 800 * phiR);
 
     //set prev errors for next loop
     for(int i = 0; i < 3; ++i) {
@@ -499,7 +513,8 @@ void PID(float velocity) {
         prevErrors[i][j] = errors[i][j];
       }
     }
-    delay(100);
+
+    delay(50);
 }
 
 
@@ -572,13 +587,27 @@ bool wall_following(){
 
 
   while (following){
-    front_distance = frontIR.getDistance();
-    left_distance = leftIR.getDistance();
-    right_distance = rightIR.getDistance();
-    down_distance = downIR.getDistance();
+    // front_distance = frontIR.getDistance();
+    // left_distance = leftIR.getDistance();
+    // right_distance = rightIR.getDistance();
+    // down_distance = downIR.getDistance();
+
+    front_distance = 800 / analogRead(FRONT_IR_PIN);
+    left_distance = 800 / analogRead(LEFT_IR_PIN);
+    right_distance = 800 / analogRead(RIGHT_IR_PIN);
+    down_distance = 800 / analogRead(DOWN_IR_PIN);
+
+    std::string nums[4] = {"df", "db", "dl", "dr"}; //key is blacklined
+    nums[0] += std::to_string(front_distance); nums[1] += std::to_string(down_distance);
+    nums[2] += std::to_string(left_distance); nums[3] += std::to_string(right_distance);
+    for(int i = 0; i < 4; ++i) {
+      Udp.beginPacket("10.17.186.85",2300);
+      Udp.write(nums[i].c_str(),nums[i].length());
+      Udp.endPacket();
+    }
 
     
-    error = 50 - left_distance;
+    error = 60 - left_distance;
 
     gradient_error = error - previous_error;
 
@@ -660,10 +689,6 @@ void setup(){
   }
 
   Serial.println("Starting main sequence");
-
-  qtr.setTimeout(1000);
-  uint8_t sensors[count] = {36,38,40,42,44,46,48,50,52};
-  qtr.setSensorPins(sensors,count);
 }
 
 void loop(){
