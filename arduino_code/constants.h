@@ -23,6 +23,11 @@
 #define RIGHT_IR_PIN A2
 #define DOWN_IR_PIN A3
 
+#define ARM_PIN 3
+#define WINCH_PIN 2
+#define HOOK_PIN 5
+#define LATCH_PIN 4
+
 enum Section{
     LINE_FOLLOW,
     WALL_FOLLOW,

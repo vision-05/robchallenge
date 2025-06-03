@@ -243,6 +243,13 @@ void setupUDP() {
   Udp.begin(localPort);
 }
 
+void setupServos() {
+  sensorServo.attach(ARM_PIN);
+  unlockServo.attach(LATCH_PIN);
+  lockServo.attach(HOOK_PIN);
+  liftServo.attach(WINCH_PIN);
+}
+
 void setupMotors() {
   Serial.println("Initialising Left Motoron Motor Driver...");
   Wire.begin();
@@ -553,6 +560,24 @@ void PID(float velocity) {
     delay(50);
 }
 
+void readSendArrays(QTR* a) {
+  a[0].readCalibrated();
+  a[1].readCalibrated();
+  a[2].readCalibrated();
+
+  for(int i = 0; i < 3; ++i) {
+    std::string nums = std::to_string(i+1) + "c"; //key is calibrated
+    for(int j = 0; j < count; ++j) {
+      nums += std::to_string(a[i][j]);
+      nums += " ";
+    }
+    Serial.println(nums.c_str());
+    Udp.beginPacket("10.17.186.85",2300);
+    Udp.write(nums.c_str(),nums.length());
+    Udp.endPacket();
+  }
+}
+
 
 bool line_following(){
   bool following = false;
@@ -741,11 +766,72 @@ bool wall_following(){
   return true;
 }
 
+int readKillSwitch(int kill) {
+  if (digitalRead(KILL_SWITCH)){
+    unsigned long t0 = millis();
+
+    while (digitalRead(KILL_SWITCH)){
+      if (millis() - t0 > 100){
+        if (kill == 1){
+          return 0;
+        } else {
+          return 1;
+        }
+
+        break;
+      } 
+    }
+  }
+  return kill;
+}
+
+void lowerSensors() {
+  sensorServo.write(50);
+}
+
+void raiseSensors() {
+  sensorServo.write(0);
+}
+
+void raiseLift() {
+  liftServo.write(100);
+}
+
+void lowerLift() {
+  liftServo.write(0);
+}
+
+void lockHook() {
+  lockServo.write(180);
+}
+
+void unlockHook() {
+  unlockServo.write(90);
+  lockServo.write(90);
+  unlockServo.write(0);
+}
+
 
 // ---------- Section Functions ----------
 // write each section as a seperate function
 
 void lava_floor(){
+  int aboveLava = 0;
+  while(!aboveLava) {
+    readSendArrays(qtrs);
+
+    if(qtrs[0][0] > 400) {
+      aboveLava = 1;
+      break;
+    }
+  }
+
+  raiseSensors();
+
+  //drive until over
+
+  lowerSensors();
+
 
 }
 
@@ -772,6 +858,7 @@ void setup(){
   setupUDP();
   setupQTR();
   setupMotors();
+  setupServos();
   killStatus = 0;
 
   // pinMode(FRONT_IR_PIN, INPUT);
@@ -808,23 +895,7 @@ void loop(){
   //payload = readSerialCommand();
   payload = readUDPCommand(&command);
   killStatus = handleCommand(command, payload, killStatus);
-
-  if (digitalRead(KILL_SWITCH)){
-    unsigned long t0 = millis();
-
-    while (digitalRead(KILL_SWITCH)){
-      if (millis() - t0 > 100){
-        if (killStatus == 1){
-          killStatus = 0;
-        } else {
-          killStatus = 1;
-        }
-
-        break;
-      } 
-    }
-  }
-
+  killStatus = readKillSwitch(killStatus);
 
   switch (current_section)
   {
@@ -839,29 +910,19 @@ void loop(){
     case TESTING:
       char direction;
       int speed;
+      Serial.println("TESTING");
        // To hold incoming data
-
-      input_string = Serial.readString();
-
-      if (input_string.length() > 1) {
-        direction = input_string.charAt(0); // L or R
-        String number = input_string.substring(1);
-        speed = number.toInt(); // Convert to integer
-
-        if (direction == 'L'){
-          left_speed = speed;
-        } else if (direction == 'R'){
-          right_speed = speed;
-        }
-
-        Serial.print("L: ");
-        Serial.print(left_speed);
-        Serial.print(" R: ");
-        Serial.println(right_speed);
+      while(1) {
+        Serial.println("RUnining");
+        unlockServo.write(90);
+        delay(500);
+        lockServo.write(90);
+        delay(500);
+        unlockServo.write(0);
+        delay(500);
+        lockServo.write(0);
+        delay(500);
       }
-
-      move(left_speed, right_speed);
-
     
     default:
       break;
