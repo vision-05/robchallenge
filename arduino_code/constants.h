@@ -6,8 +6,12 @@
 #define RIGHT_DISTANCE_PIN 5
 #define FRONT_DISTANCE_PIN 6
 #define FLOOR_DISTANCE_PIN 7
+#define DIAGONAL_DISTANCE_PIN 6
 
-#define SERVO_PIN 17
+#define ARM_PIN 3
+#define WINCH_PIN 2
+#define HOOK_PIN 5
+#define LATCH_PIN 4
 
 #define SECRET_SSID "Timtimtimtimtim"
 #define SECRET_PASS "ajs35ddagtxq7m2"
@@ -29,9 +33,9 @@ enum Section{
     TESTING
 };
 
-const Section section_order[] = {Section::WALL_FOLLOW};
+const Section section_order[] = {Section::LINE_FOLLOW};
 
-const int BASE_SPEED = 50; //base speed of robot as percentage
+const int BASE_SPEED = 70; //base speed of robot as percentage
 
 const int MAX_FRONT_PWM = 700;
 const int MAX_BACK_PWM = 800;

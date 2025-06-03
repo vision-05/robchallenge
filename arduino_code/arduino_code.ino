@@ -14,6 +14,9 @@ MotoronI2C mdL(15);
 MotoronI2C mdR(17);
 
 Servo sensor_servo;
+Servo winch_servo;
+Servo hook_servo;
+Servo latch_servo;
 
 WiFiUDP Udp; //UDP to receive WiFi signal
 
@@ -37,6 +40,7 @@ double front_distance = 0.0f;
 double left_distance = 0.0f;
 double right_distance = 0.0f;
 double down_distance = 0.0f;
+double fl_diag_distance = 0.0f;
 
 //WiFi variables
 char ssid[] = SECRET_SSID; // your network SSID (name)
@@ -67,6 +71,10 @@ uint8_t sensors[3][count] = {{22,24,26,28,30,32,34,36,38},
                              {23,25,27,29,31,33,35,37,39},
                              {42,43,44,45,46,47,48,49,50}};
 
+uint8_t qtr_right_pins[2] = {7,8};
+int right_threshold = 5;
+QTR qtr_right;
+
 //allow for changing over serial
 float kp = 0.04f; //p225
 float kd = 0.0f; //d5
@@ -91,27 +99,13 @@ float sum(float* arr) {
 }
 
 
-
-// ---------- Sensor Reading Functions ----------
-
-/// @brief measure distance to wall in mm
-/// @param pin the digital pin which the sensor is connected to
-/// @return distance in mm
-float read_distance_sensor(int pin){
-  float distance = 0.0f;
-  float total = 0.0f;
-  
-  //read multiple times and take average to reduce noise
-  for (int i = 0; i < NUM_SENSOR_AVG; ++i){
-    distance = 0.0f; //implement actual logic to read sensor here
-
-    total = total + distance;
-  }
-
-
-  return total / NUM_SENSOR_AVG;
+void lower_arm(){
+  sensor_servo.write(50);
 }
 
+void raise_arm(){
+  sensor_servo.write(5);
+}
 
 // ---------- Util Functions ----------
 
@@ -147,6 +141,7 @@ int handleCommand(char command, String payload, int kill) {
     return 0;
   }
   if(command == 'k') {
+    Serial.println("KILL");
     return 1;
   }
   return kill;
@@ -279,11 +274,17 @@ void setupQTR() {
     qtrs[i].setThreshold(&blackthresholds[i]);
   }
 
+  qtr_right.setTimeout(600);
+  qtr_right.setSensorPins(qtr_right_pins, 2);
+  qtr_right.setThreshold(&right_threshold);
+
   for(uint16_t i = 0; i < 20; i++) {
     for(int i = 0; i < 3; ++i) {
       qtrs[i].calibrate(10, Emitter::Off, Parity::EvenAndOdd);
       delay(100);
     }
+
+    qtr_right.calibrate(10, Emitter::Off, Parity::EvenAndOdd);
   }
 
 
@@ -388,13 +389,13 @@ void move(int left, int right){
   // Serial.println(back_left_speed);
   // Serial.println(back_right_speed);
 
-  mdL.setSpeed(1, -front_left_speed);
-  mdL.setSpeed(2, -front_left_speed);
-  mdL.setSpeed(3, back_left_speed);
+  mdL.setSpeed(1, front_left_speed);
+  mdL.setSpeed(2, front_left_speed);
+  mdL.setSpeed(3, -back_left_speed);
 
-  mdR.setSpeed(1, front_right_speed);
-  mdR.setSpeed(2, front_right_speed);
-  mdR.setSpeed(3, -back_right_speed);
+  mdR.setSpeed(1, -front_right_speed);
+  mdR.setSpeed(2, -front_right_speed);
+  mdR.setSpeed(3, back_right_speed);
 }
 
 void check_stuck(){
@@ -420,8 +421,9 @@ void PID(float velocity) {
                               {-4,-3,-2,-1,0,1,2,3,4}};
 
     //if either of left two and either of right two and no middle then
-    if ((qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) && (qtrs[0][0] || qtrs[0][1] || qtrs[0][2]) && qtrs[0][4] && (qtrs[0][3] || qtrs[0][5])){
+    if ((qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) && (qtrs[0][0] || qtrs[0][1] || qtrs[0][2]) && !qtrs[0][4] && (!qtrs[0][3] || !qtrs[0][5])){
       //turn left, then go forwards briefly
+      Serial.println("Fork Detected!");
       move(-BASE_SPEED, BASE_SPEED);
       delay(500);
 
@@ -429,12 +431,36 @@ void PID(float velocity) {
       delay(300);
     }
 
-    if (frontIR.getDistance() < 40){
+    Serial.print("QTR Right: ");
+    Serial.print(qtr_right[0]);
+    Serial.print(" ");
+    Serial.println(qtr_right[1]);
+
+    //detecting right turn
+    if ((qtrs[0][3] || qtrs[0][4] || qtrs[0][5]) && (qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) || (qtr_right[0] && qtr_right[1])){
+      Serial.println("Right Turn Detected!");
+
+      move(BASE_SPEED, -BASE_SPEED);
+      delay(500);
+    }
+
+    //detecting left turn
+    if ((qtrs[0][3] || qtrs[0][4] || qtrs[0][5]) && (qtrs[0][0] || qtrs[0][1] || qtrs[0][2]) && (!qtr_right[0] || !qtr_right[1])){
+      Serial.println("Left Turn Detected!");
+
+      move(-BASE_SPEED, BASE_SPEED);
+      delay(500);
+    }
+
+    //detecting wall in front
+    front_distance = read_distance(FRONT_DISTANCE_PIN);
+
+    if (front_distance < 8){
       move(-BASE_SPEED, -BASE_SPEED);
       delay(500);
 
       move(BASE_SPEED, -BASE_SPEED);
-      delay(500);
+      delay(1000);
 
       move(BASE_SPEED, BASE_SPEED);
       delay(300);
@@ -506,8 +532,16 @@ void PID(float velocity) {
     Serial.print(phiR);
     Serial.println();
 
+    int left = floor(BASE_SPEED + (float)(100 * phiL));
+    int right = floor(BASE_SPEED + (float)(100 * phiR));
+
+    Serial.print("Motors: ");
+    Serial.print(left);
+    Serial.print(" ");
+    Serial.println(right);
+
     //run motors
-    move(250 + 800 * phiL, 250 + 800 * phiR);
+    move(left, right);
 
     //set prev errors for next loop
     for(int i = 0; i < 3; ++i) {
@@ -521,7 +555,7 @@ void PID(float velocity) {
 
 
 bool line_following(){
-  bool following = true;
+  bool following = false;
 
   char command;
   String payload;
@@ -532,9 +566,10 @@ bool line_following(){
   qtrs[0].readCalibrated();
   qtrs[1].readCalibrated();
   qtrs[2].readCalibrated();
-
+  qtr_right.readCalibrated();
+  std::string nums = "";
   for(int i = 0; i < 3; ++i) {
-    std::string nums = std::to_string(i+1) + "c"; //key is calibrated
+    nums = std::to_string(i+1) + "c"; //key is calibrated
     for(int j = 0; j < count; ++j) {
       nums += std::to_string(qtrs[i][j]);
       nums += " ";
@@ -544,14 +579,25 @@ bool line_following(){
     Udp.write(nums.c_str(),nums.length());
     Udp.endPacket();
   }
+
+  nums = std::to_string(4) + "c"; //key is calibrated
+    for(int j = 0; j < 2; ++j) {
+      nums += std::to_string(qtr_right[j]);
+      nums += " ";
+    }
+    Serial.println(nums.c_str());
+    Udp.beginPacket("10.17.186.85",2300);
+    Udp.write(nums.c_str(),nums.length());
+    Udp.endPacket();
   
   
   qtrs[0].readBlackLine();
   qtrs[1].readBlackLine();
   qtrs[2].readBlackLine();
+  qtr_right.readBlackLine();
 
   for(int i = 0; i < 3; ++i) {
-    std::string nums = std::to_string(i+1) + "b"; //key is blacklined
+    nums = std::to_string(i+1) + "b"; //key is blacklined
     for(int j = 0; j < count; ++j) {
       nums += std::to_string(qtrs[i][j]);
       nums += " ";
@@ -561,6 +607,16 @@ bool line_following(){
     Udp.write(nums.c_str(),nums.length());
     Udp.endPacket();
   }
+  nums = std::to_string(4) + "b"; //key is blacklined
+  for(int j = 0; j < 2; ++j) {
+      nums += std::to_string(qtr_right[j]);
+      nums += " ";
+    }
+    Serial.println(nums.c_str());
+    Udp.beginPacket("10.17.186.85",2300);
+    Udp.write(nums.c_str(),nums.length());
+    Udp.endPacket();
+  
   
   if(!killStatus) {
     Serial.println("PID");
@@ -578,6 +634,21 @@ double read_distance(int pin){
   return calibrated;
 }
 
+double read_diag_distance(){
+  int16_t t = pulseIn(DIAGONAL_DISTANCE_PIN, HIGH);
+  double distance = -1;
+
+  if (t > 0 && t < 1850){
+    distance = (t - 1000) * 2;
+
+    if (distance < 0){
+      distance = 0;
+    }
+  }
+
+  return distance;
+}
+
 
 bool wall_following(){
   bool following = true;
@@ -588,37 +659,36 @@ bool wall_following(){
   double gradient_error = 0.0f;
   double control_signal = 0.0f;
 
-  const double Kp = 0.5f;
+  const double Kp = 6.0f;
   const double Ki = 0.0001f;
-  const double Kd = 0.3f;
+  const double Kd = 1.75f;
 
   int left = 0;
   int right = 0;
 
+  raise_arm();
+
 
   while (following){
-    // front_distance = frontIR.getDistance();
-    // left_distance = leftIR.getDistance();
-    // right_distance = rightIR.getDistance();
-    // down_distance = downIR.getDistance();
-
-
     front_distance = read_distance(FRONT_IR_PIN);
     left_distance = read_distance(LEFT_IR_PIN);
     right_distance = read_distance(RIGHT_IR_PIN);
     down_distance = read_distance(DOWN_IR_PIN);
+    fl_diag_distance = read_diag_distance();
 
     Serial.print("F: ");
     Serial.print(front_distance);
     Serial.print(" L: ");
-    Serial.println(left_distance);
+    Serial.print(left_distance);
+    Serial.print(" FL: ");
+    Serial.println(fl_diag_distance);
     // Serial.print(" R: ");
     // Serial.print(right_distance);
     // Serial.print(" D: ");
     // Serial.println(down_distance);
 
     std::string nums[4] = {"df", "db", "dl", "dr"}; //key is blacklined
-    nums[0] += std::to_string(front_distance); nums[1] += std::to_string(down_distance);
+    nums[0] += std::to_string(front_distance); nums[1] += std::to_string(fl_diag_distance);
     nums[2] += std::to_string(left_distance); nums[3] += std::to_string(right_distance);
     for(int i = 0; i < 4; ++i) {
       Udp.beginPacket("10.17.186.85",2300);
@@ -631,7 +701,7 @@ bool wall_following(){
     }
 
     
-    error = 6.5f - left_distance;
+    error = 8.0f - left_distance;
 
     Serial.print("Error: ");
     Serial.println(error);
@@ -654,8 +724,8 @@ bool wall_following(){
     Serial.print(" ");
     Serial.println(right);
 
-    //avoiding head on collision
-    if (front_distance < 6){
+    //avoiding head on collision || fl_diag_distance < 95
+    if (front_distance < 12){
       move(BASE_SPEED, -BASE_SPEED);
       
     } else {
@@ -710,7 +780,10 @@ void setup(){
   // pinMode(DOWN_IR_PIN, INPUT);
 
   Serial.println("Attaching Servos!");
-  sensor_servo.attach(SERVO_PIN);
+  sensor_servo.attach(ARM_PIN);
+  winch_servo.attach(WINCH_PIN);
+  hook_servo.attach(HOOK_PIN);
+  latch_servo.attach(LATCH_PIN);
 
   Serial.println("Initialisation completed!");
 
@@ -811,8 +884,8 @@ void loop(){
     current_section = section_order[section_idx];
 
     finished = false;
+    }
   }
 
   check_kill_switch();
-}
 }
