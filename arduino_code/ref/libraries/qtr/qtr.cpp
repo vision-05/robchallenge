@@ -192,15 +192,25 @@ void QTR::readCalibrated() {
 
 	//average sensor readings to filter noise
 
+	uint32_t* tempReads = new uint32_t[this->count];
+
 	for(int i = 1; i < this->count -1; ++i) {
-		this->readings[i] = (this->readings[i-1] + this->readings[i] + this->readings[i+1])*0.333;
+		tempReads[i] = (this->readings[i-1] + this->readings[i] + this->readings[i+1])*0.333;
 	}
+	tempReads[0] = (this->readings[0] + this->readings[1])*0.5;
+	tempReads[this->count - 1] = (this->readings[this->count - 2] + this->readings[this->count - 1])*0.5;
+
+	for(int i = 0; i < this->count; ++i) {
+		this->readings[i] = tempReads[i];
+	}
+
+	delete[] tempReads;
 }
 
 void QTR::readBlackLine() {
 	this->readCalibrated();
 	for(int i = 0; i < this->count; ++i) {
-		if(this->readings[i] > *(this->threshold)) {
+		if(this->readings[i] < *(this->threshold)) {
 			this->readings[i] = 1;
 		}
 		else {
