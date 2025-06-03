@@ -33,10 +33,10 @@ int back_left_speed = 0;
 int back_right_speed = 0;
 
 //distance sensor distances
-float front_distance = 0.0f;
-float left_distance = 0.0f;
-float right_distance = 0.0f;
-float down_distance = 0.0f;
+double front_distance = 0.0f;
+double left_distance = 0.0f;
+double right_distance = 0.0f;
+double down_distance = 0.0f;
 
 //WiFi variables
 char ssid[] = SECRET_SSID; // your network SSID (name)
@@ -310,10 +310,12 @@ void setupQTR() {
 void check_kill_switch(){
   //physical switch
   if (digitalRead(KILL_SWITCH)){
+    Serial.println("Detect killswitch");
     unsigned long t0 = millis();
 
     while (digitalRead(KILL_SWITCH)){
       if (millis() - t0 > 100){
+        Serial.println("Switching state");
         if (killStatus == 1){
           killStatus = 0;
         } else {
@@ -568,6 +570,14 @@ bool line_following(){
   return following;
 }
 
+double read_distance(int pin){
+  int raw = analogRead(pin);
+
+  double calibrated = 800 / (double)raw;
+
+  return calibrated;
+}
+
 
 bool wall_following(){
   bool following = true;
@@ -578,9 +588,9 @@ bool wall_following(){
   double gradient_error = 0.0f;
   double control_signal = 0.0f;
 
-  const double Kp = 0.15f;
-  const double Ki = 0.001f;
-  const double Kd = 0.4f;
+  const double Kp = 0.5f;
+  const double Ki = 0.0001f;
+  const double Kd = 0.3f;
 
   int left = 0;
   int right = 0;
@@ -592,10 +602,20 @@ bool wall_following(){
     // right_distance = rightIR.getDistance();
     // down_distance = downIR.getDistance();
 
-    front_distance = 800 / analogRead(FRONT_IR_PIN);
-    left_distance = 800 / analogRead(LEFT_IR_PIN);
-    right_distance = 800 / analogRead(RIGHT_IR_PIN);
-    down_distance = 800 / analogRead(DOWN_IR_PIN);
+
+    front_distance = read_distance(FRONT_IR_PIN);
+    left_distance = read_distance(LEFT_IR_PIN);
+    right_distance = read_distance(RIGHT_IR_PIN);
+    down_distance = read_distance(DOWN_IR_PIN);
+
+    Serial.print("F: ");
+    Serial.print(front_distance);
+    Serial.print(" L: ");
+    Serial.println(left_distance);
+    // Serial.print(" R: ");
+    // Serial.print(right_distance);
+    // Serial.print(" D: ");
+    // Serial.println(down_distance);
 
     std::string nums[4] = {"df", "db", "dl", "dr"}; //key is blacklined
     nums[0] += std::to_string(front_distance); nums[1] += std::to_string(down_distance);
@@ -606,14 +626,24 @@ bool wall_following(){
       Udp.endPacket();
     }
 
+    if (killStatus){
+      continue;
+    }
+
     
-    error = 60 - left_distance;
+    error = 6.5f - left_distance;
+
+    Serial.print("Error: ");
+    Serial.println(error);
 
     gradient_error = error - previous_error;
 
     sum_error = sum_error + error;
 
     control_signal = floor(Kp * error + Ki * sum_error + Kd * gradient_error);
+
+    Serial.print("Control signal: ");
+    Serial.println(control_signal);
 
     previous_error = error;
 
@@ -625,7 +655,7 @@ bool wall_following(){
     Serial.println(right);
 
     //avoiding head on collision
-    if (front_distance < 50){
+    if (front_distance < 6){
       move(BASE_SPEED, -BASE_SPEED);
       
     } else {
@@ -633,8 +663,8 @@ bool wall_following(){
     }
 
     check_kill_switch();
-    check_stuck();
-    //delay(50); //small delay to allow motors to move robot before overeacting
+    //check_stuck();
+    delay(50); //small delay to allow motors to move robot before overeacting
 
   }
 
@@ -673,6 +703,11 @@ void setup(){
   setupQTR();
   setupMotors();
   killStatus = 0;
+
+  // pinMode(FRONT_IR_PIN, INPUT);
+  // pinMode(LEFT_IR_PIN, INPUT);
+  // pinMode(RIGHT_IR_PIN, INPUT);
+  // pinMode(DOWN_IR_PIN, INPUT);
 
   Serial.println("Attaching Servos!");
   sensor_servo.attach(SERVO_PIN);
@@ -758,6 +793,8 @@ void loop(){
     default:
       break;
   }
+
+  
 
   if (finished){
     section_idx++;
