@@ -1,5 +1,5 @@
 //pinouts
-#define KILL_SWITCH 2
+#define KILL_SWITCH 12
 #define LED_PIN 3
 
 #define LEFT_DISTANCE_PIN 4

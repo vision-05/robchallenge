@@ -71,16 +71,19 @@ uint8_t sensors[3][count] = {{22,24,26,28,30,32,34,36,38},
                              {23,25,27,29,31,33,35,37,39},
                              {42,43,44,45,46,47,48,49,50}};
 
+uint8_t qtr_left_pins[2] = {9,10};
 uint8_t qtr_right_pins[2] = {7,8};
-int right_threshold = 5;
+int left_threshold = 100;
+int right_threshold = 560;
+QTR qtr_left;
 QTR qtr_right;
 
 //allow for changing over serial
-float kp = 0.04f; //p225
-float kd = 0.0f; //d5
+float kp = 0.50f; //p225
+float kd = 0.02f; //d5
 float ki = 0.0f;//i0.1
 
-int blackthresholds[3] = {5,5,5};
+int blackthresholds[3] = {50,110,100};
 const float samplet = 0.3;
 constexpr float invSamplet = 1/0.3;
 constexpr float invCount = 1/9;
@@ -99,13 +102,7 @@ float sum(float* arr) {
 }
 
 
-void lower_arm(){
-  sensor_servo.write(50);
-}
 
-void raise_arm(){
-  sensor_servo.write(5);
-}
 
 // ---------- Util Functions ----------
 
@@ -125,6 +122,10 @@ int handleCommand(char command, String payload, int kill) {
   if(command == 'p') {
     k = payload.toFloat()/100;
     kp = k;
+
+    Serial.println(k);
+    delay(500);
+
     return kill;
   }
   if(command == 'i') {
@@ -142,6 +143,7 @@ int handleCommand(char command, String payload, int kill) {
   }
   if(command == 'k') {
     Serial.println("KILL");
+    move(0,0);
     return 1;
   }
   return kill;
@@ -233,7 +235,7 @@ void setupUDP() {
     status = WiFi.begin(ssid, pass);
 
     // 5 second delay waiting for connection
-    delay(5000);
+    delay(4000);
   }
 
   Serial.println("You're connected to the network");
@@ -241,13 +243,6 @@ void setupUDP() {
   Serial.println(ip);
 
   Udp.begin(localPort);
-}
-
-void setupServos() {
-  sensorServo.attach(ARM_PIN);
-  unlockServo.attach(LATCH_PIN);
-  lockServo.attach(HOOK_PIN);
-  liftServo.attach(WINCH_PIN);
 }
 
 void setupMotors() {
@@ -272,16 +267,22 @@ void setupMotors() {
   mdL.setMaxAcceleration(3,80);
   mdR.setMaxDeceleration(3,300);
   mdL.setMaxDeceleration(3,300);
+
+  move(0,0);
 }
 
 void setupQTR() {
   for(int i = 0; i < 3; ++i) {
-    qtrs[i].setTimeout(600);
+    qtrs[i].setTimeout(800);
     qtrs[i].setSensorPins(sensors[i],count);
     qtrs[i].setThreshold(&blackthresholds[i]);
   }
 
-  qtr_right.setTimeout(600);
+  qtr_left.setTimeout(800);
+  qtr_left.setSensorPins(qtr_left_pins, 2);
+  qtr_left.setThreshold(&left_threshold);
+
+  qtr_right.setTimeout(800);
   qtr_right.setSensorPins(qtr_right_pins, 2);
   qtr_right.setThreshold(&right_threshold);
 
@@ -291,6 +292,8 @@ void setupQTR() {
       delay(100);
     }
 
+    qtr_left.calibrate(10, Emitter::Off, Parity::EvenAndOdd);
+    delay(10);
     qtr_right.calibrate(10, Emitter::Off, Parity::EvenAndOdd);
   }
 
@@ -317,24 +320,27 @@ void setupQTR() {
 
 void check_kill_switch(){
   //physical switch
-  if (digitalRead(KILL_SWITCH)){
-    Serial.println("Detect killswitch");
-    unsigned long t0 = millis();
+  // std::string nums = "l" + std::to_string(state);
+  // Udp.beginPacket("10.17.186.85",2300);
+  // Udp.write(nums.c_str(),nums.length());
+  // Udp.endPacket();
 
-    while (digitalRead(KILL_SWITCH)){
+  if (!digitalRead(KILL_SWITCH)){
+    Serial.println("Detect killswitch");
+
+    unsigned long t0 = millis();
+    while (!digitalRead(KILL_SWITCH)){
       if (millis() - t0 > 100){
-        Serial.println("Switching state");
         if (killStatus == 1){
           killStatus = 0;
         } else {
           killStatus = 1;
         }
-
         break;
-      } 
+      }
     }
+    
   }
-  
 }
 
 void shutdown(){
@@ -427,42 +433,56 @@ void PID(float velocity) {
                               {-8,-6,-4,-2,0,2,4,6,8},
                               {-4,-3,-2,-1,0,1,2,3,4}};
 
-    //if either of left two and either of right two and no middle then
-    if ((qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) && (qtrs[0][0] || qtrs[0][1] || qtrs[0][2]) && !qtrs[0][4] && (!qtrs[0][3] || !qtrs[0][5])){
-      //turn left, then go forwards briefly
-      Serial.println("Fork Detected!");
-      move(-BASE_SPEED, BASE_SPEED);
-      delay(500);
-
-      move(BASE_SPEED, BASE_SPEED);
-      delay(300);
-    }
-
-    Serial.print("QTR Right: ");
+    Serial.print("QTR Left: ");
+    Serial.print(qtr_left[0]);
+    Serial.print(" ");
+    Serial.print(qtr_left[1]);
+    Serial.print(" QTR Right: ");
     Serial.print(qtr_right[0]);
     Serial.print(" ");
     Serial.println(qtr_right[1]);
 
-    //detecting right turn
-    if ((qtrs[0][3] || qtrs[0][4] || qtrs[0][5]) && (qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) || (qtr_right[0] && qtr_right[1])){
-      Serial.println("Right Turn Detected!");
-
+    //if either of left two and either of right two and no middle then
+    if ((!qtrs[0][3] && !qtrs[0][4] && !qtrs[0][5]) && ((qtr_left[0] || qtr_left[1]) && (qtr_right[0] || qtr_right[1]))){
+      //turn left, then go forwards briefly
+      Serial.println("Fork Detected!");
       move(BASE_SPEED, -BASE_SPEED);
       delay(500);
+
+      return;
+
+      // move(BASE_SPEED, BASE_SPEED);
+      // delay(200);
+    }
+
+
+    //detecting right turn
+    if ((qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) && (qtr_right[0] || qtr_right[1])){
+      Serial.println("Right Turn Detected!");
+
+      move(100, -100);
+      delay(500);
+
+      return;
     }
 
     //detecting left turn
-    if ((qtrs[0][3] || qtrs[0][4] || qtrs[0][5]) && (qtrs[0][0] || qtrs[0][1] || qtrs[0][2]) && (!qtr_right[0] || !qtr_right[1])){
+    if ((qtrs[0][1] || qtrs[0][2] || qtrs[0][3]) && (qtr_left[0] || qtr_left[1])){
       Serial.println("Left Turn Detected!");
 
-      move(-BASE_SPEED, BASE_SPEED);
+      move(-100, 100);
       delay(500);
+
+      return;
     }
 
     //detecting wall in front
     front_distance = read_distance(FRONT_DISTANCE_PIN);
+    Serial.print("Front distance: ");
+    Serial.println(front_distance);
 
-    if (front_distance < 8){
+    if (front_distance < 5){
+      Serial.println("Detected front wall, turning back!");
       move(-BASE_SPEED, -BASE_SPEED);
       delay(500);
 
@@ -471,6 +491,8 @@ void PID(float velocity) {
 
       move(BASE_SPEED, BASE_SPEED);
       delay(300);
+
+      return;
     }
 
     for(int i = 0; i < 3; ++i) {
@@ -510,37 +532,27 @@ void PID(float velocity) {
     //   dtheta = 0;
     // }
 
-    Serial.print("DTheta ");
-    Serial.print(dtheta);
-    Serial.println();
-    float omega = dtheta*invSamplet;
-    Serial.print("Omega ");
-    Serial.print(omega);
-    Serial.println();
+    // Serial.print("DTheta ");
+    // Serial.print(dtheta);
+    // Serial.println();
+    // float omega = dtheta*invSamplet;
+    // Serial.print("Omega ");
+    // Serial.print(omega);
+    // Serial.println();
     
     //inverse kinematics
 
-    float phiL = (velocity*invRadius) - (omega*invRadius*0.3);
-    float phiR = (velocity*invRadius) + (omega*invRadius*0.3);
+    // float phiL = (velocity*invRadius) + (omega*invRadius*0.3);
+    // float phiR = (velocity*invRadius) - (omega*invRadius*0.3);
 
+    // Serial.print("PhiL: ");
+    // Serial.print(phiL);
+    // Serial.print(" PhiR: ");
+    // Serial.print(phiR);
+    // Serial.println();
 
-    if (phiL < 0.7 && phiR < 0.7){
-      phiL = phiL * 1.8;
-      phiR = phiR * 1.8;
-    }
-    else {
-      phiL = phiL * 1.25;
-      phiR = phiR * 1.25;
-    }
-
-    Serial.print("PhiL: ");
-    Serial.print(phiL);
-    Serial.print("PhiR: ");
-    Serial.print(phiR);
-    Serial.println();
-
-    int left = floor(BASE_SPEED + (float)(100 * phiL));
-    int right = floor(BASE_SPEED + (float)(100 * phiR));
+    int left = floor(BASE_SPEED - 10 - (float)(100 * dtheta));
+    int right = floor(BASE_SPEED - 10 + (float)(100 * dtheta));
 
     Serial.print("Motors: ");
     Serial.print(left);
@@ -557,7 +569,7 @@ void PID(float velocity) {
       }
     }
 
-    delay(50);
+    delay(100);
 }
 
 void readSendArrays(QTR* a) {
@@ -587,19 +599,25 @@ bool line_following(){
   //payload = readSerialCommand();
   payload = readUDPCommand(&command);
   killStatus = handleCommand(command, payload, killStatus);
-
+  command = ' ';
   qtrs[0].readCalibrated();
   qtrs[1].readCalibrated();
   qtrs[2].readCalibrated();
+  qtr_left.readCalibrated();
   qtr_right.readCalibrated();
   std::string nums = "";
+
+  Udp.beginPacket("10.17.186.85",2300);
+  Udp.write(nums.c_str(),nums.length());
+  Udp.endPacket();
+  
   for(int i = 0; i < 3; ++i) {
     nums = std::to_string(i+1) + "c"; //key is calibrated
     for(int j = 0; j < count; ++j) {
       nums += std::to_string(qtrs[i][j]);
       nums += " ";
     }
-    Serial.println(nums.c_str());
+    //Serial.println(nums.c_str());
     Udp.beginPacket("10.17.186.85",2300);
     Udp.write(nums.c_str(),nums.length());
     Udp.endPacket();
@@ -610,7 +628,17 @@ bool line_following(){
       nums += std::to_string(qtr_right[j]);
       nums += " ";
     }
-    Serial.println(nums.c_str());
+    //Serial.println(nums.c_str());
+    Udp.beginPacket("10.17.186.85",2300);
+    Udp.write(nums.c_str(),nums.length());
+    Udp.endPacket();
+
+  nums = std::to_string(5) + "c"; //key is calibrated
+    for(int j = 0; j < 2; ++j) {
+      nums += std::to_string(qtr_left[j]);
+      nums += " ";
+    }
+    //Serial.println(nums.c_str());
     Udp.beginPacket("10.17.186.85",2300);
     Udp.write(nums.c_str(),nums.length());
     Udp.endPacket();
@@ -619,6 +647,7 @@ bool line_following(){
   qtrs[0].readBlackLine();
   qtrs[1].readBlackLine();
   qtrs[2].readBlackLine();
+  qtr_left.readBlackLine();
   qtr_right.readBlackLine();
 
   for(int i = 0; i < 3; ++i) {
@@ -627,7 +656,7 @@ bool line_following(){
       nums += std::to_string(qtrs[i][j]);
       nums += " ";
     }
-    Serial.println(nums.c_str());
+    //Serial.println(nums.c_str());
     Udp.beginPacket("10.17.186.85",2300);
     Udp.write(nums.c_str(),nums.length());
     Udp.endPacket();
@@ -637,7 +666,17 @@ bool line_following(){
       nums += std::to_string(qtr_right[j]);
       nums += " ";
     }
-    Serial.println(nums.c_str());
+    //Serial.println(nums.c_str());
+    Udp.beginPacket("10.17.186.85",2300);
+    Udp.write(nums.c_str(),nums.length());
+    Udp.endPacket();
+
+  nums = std::to_string(5) + "b"; //key is blacklined
+  for(int j = 0; j < 2; ++j) {
+      nums += std::to_string(qtr_left[j]);
+      nums += " ";
+    }
+    //Serial.println(nums.c_str());
     Udp.beginPacket("10.17.186.85",2300);
     Udp.write(nums.c_str(),nums.length());
     Udp.endPacket();
@@ -684,7 +723,7 @@ bool wall_following(){
   double gradient_error = 0.0f;
   double control_signal = 0.0f;
 
-  const double Kp = 6.0f;
+  const double Kp = 12.0f;
   const double Ki = 0.0001f;
   const double Kd = 1.75f;
 
@@ -726,7 +765,7 @@ bool wall_following(){
     }
 
     
-    error = 8.0f - left_distance;
+    error = 11.0f - left_distance;
 
     Serial.print("Error: ");
     Serial.println(error);
@@ -745,13 +784,21 @@ bool wall_following(){
     left = BASE_SPEED + control_signal;
     right = BASE_SPEED - control_signal;
 
+    std::string l = "lLeft: " + std::to_string(left) + " Right: " + std::to_string(right);
+    Udp.beginPacket("10.17.186.85",2300);
+      Udp.write(l.c_str(),l.length());
+      Udp.endPacket();
+
+
+    Serial.print("Left: ");
     Serial.print(left);
-    Serial.print(" ");
+    Serial.print(" Right: ");
     Serial.println(right);
+
 
     //avoiding head on collision || fl_diag_distance < 95
     if (front_distance < 12){
-      move(BASE_SPEED, -BASE_SPEED);
+      move(100, -100);
       
     } else {
       move(left, right);
@@ -785,54 +832,71 @@ int readKillSwitch(int kill) {
   return kill;
 }
 
-void lowerSensors() {
-  sensorServo.write(50);
+void lower_arm(){
+  sensor_servo.write(50);
 }
 
-void raiseSensors() {
-  sensorServo.write(0);
+void raise_arm(){
+  sensor_servo.write(5);
 }
 
-void raiseLift() {
-  liftServo.write(100);
+void raise_lift() {
+  winch_servo.write(100);
 }
 
-void lowerLift() {
-  liftServo.write(0);
+void lower_lift() {
+  winch_servo.write(0);
 }
 
-void lockHook() {
-  lockServo.write(180);
+void lock_hook() {
+  hook_servo.write(180);
 }
 
-void unlockHook() {
-  unlockServo.write(90);
-  lockServo.write(90);
-  unlockServo.write(0);
+void unlock_hook() {
+  latch_servo.write(90);
+  hook_servo.write(90);
+  latch_servo.write(0);
 }
 
 
 // ---------- Section Functions ----------
 // write each section as a seperate function
 
-void lava_floor(){
+bool lava_floor(){
+  int following = true;
   int aboveLava = 0;
   while(!aboveLava) {
     readSendArrays(qtrs);
 
-    if(qtrs[0][0] > 400) {
+    if(qtrs[0][0] > 55) {
       aboveLava = 1;
       break;
     }
   }
 
-  raiseSensors();
+  raise_arm();
+
+  raise_lift();
+
+  delay(1000);
+
+  lock_hook();
 
   //drive until over
 
-  lowerSensors();
+  move(100,100);
 
+  delay(1000);
 
+  unlock_hook();
+
+  delay(1000);
+
+  lower_lift();
+
+  lower_arm();
+
+  return following;
 }
 
 
@@ -851,14 +915,13 @@ void setup(){
   Serial.begin(115200);
   Serial.setTimeout(1); 
 
-  pinMode(KILL_SWITCH, INPUT);
+  pinMode(KILL_SWITCH, INPUT_PULLUP);
 
   Serial.println("Initialising system...");
 
   setupUDP();
   setupQTR();
   setupMotors();
-  setupServos();
   killStatus = 0;
 
   // pinMode(FRONT_IR_PIN, INPUT);
@@ -895,7 +958,10 @@ void loop(){
   //payload = readSerialCommand();
   payload = readUDPCommand(&command);
   killStatus = handleCommand(command, payload, killStatus);
-  killStatus = readKillSwitch(killStatus);
+  //killStatus = readKillSwitch(killStatus);
+  command = ' ';
+
+  // setupMotors();
 
   switch (current_section)
   {
@@ -907,6 +973,10 @@ void loop(){
       finished = wall_following();
       break;
 
+    case LAVA_FLOOR:
+      finished = lava_floor();
+      break;
+
     case TESTING:
       char direction;
       int speed;
@@ -914,15 +984,18 @@ void loop(){
        // To hold incoming data
       while(1) {
         Serial.println("RUnining");
-        unlockServo.write(90);
-        delay(500);
-        lockServo.write(90);
-        delay(500);
-        unlockServo.write(0);
-        delay(500);
-        lockServo.write(0);
-        delay(500);
+
+        move(70,70);
+        // unlockServo.write(90);
+        // delay(500);
+        // lockServo.write(90);
+        // delay(500);
+        // unlockServo.write(0);
+        // delay(500);
+        // lockServo.write(0);
+        // delay(500);
       }
+      break;
     
     default:
       break;
