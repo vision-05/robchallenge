@@ -64,8 +64,8 @@ Section current_section = section_order[section_idx];
 //Line following
 const int count = 9;
 const int halfwidth = 6;
-constexpr float invRadius = 1/6.5;
-const float invArrayCount = 0.333;
+constexpr double invRadius = 1/6.5;
+const double invArrayCount = 0.333;
 QTR qtrs[3];
 uint8_t sensors[3][count] = {{22,24,26,28,30,32,34,36,38},
                              {23,25,27,29,31,33,35,37,39},
@@ -74,24 +74,33 @@ uint8_t sensors[3][count] = {{22,24,26,28,30,32,34,36,38},
 uint8_t qtr_left_pins[2] = {9,10};
 uint8_t qtr_right_pins[2] = {7,8};
 int left_threshold = 100;
-int right_threshold = 560;
+int right_threshold = 550;
 QTR qtr_left;
 QTR qtr_right;
+double i_error_sides = 0.0;
 
 //allow for changing over serial
-float kp = 0.50f; //p225
-float kd = 0.02f; //d5
-float ki = 0.0f;//i0.1
+double kp = 0.00000001f; //p225
+double kd = 0.06f; //d5
+double ki = 0.0f;//i0.1
 
 int blackthresholds[3] = {50,110,100};
-const float samplet = 0.3;
-constexpr float invSamplet = 1/0.3;
-constexpr float invCount = 1/9;
+const double samplet = 0.3;
+constexpr double invSamplet = 1/0.3;
+constexpr double invCount = 1/9;
 
 int32_t prevErrors[3][count] = {{0,0,0,0,0,0,0,0,0},
                                 {0,0,0,0,0,0,0,0,0},
                                 {0,0,0,0,0,0,0,0,0}};
 
+
+double sum(double* arr) {
+  int s = 0;
+  for(int i = 0; i < count; ++i) {
+    s += arr[i];
+  }
+  return s;
+}
 
 float sum(float* arr) {
   int s = 0;
@@ -261,12 +270,17 @@ void setupMotors() {
 
   mdR.setMaxAcceleration(1,80);
   mdL.setMaxAcceleration(1,80);
-  mdR.setMaxDeceleration(1,300);
-  mdL.setMaxDeceleration(1,300);
+  mdR.setMaxAcceleration(2,80);
+  mdL.setMaxAcceleration(2,80);
   mdR.setMaxAcceleration(3,80);
   mdL.setMaxAcceleration(3,80);
-  mdR.setMaxDeceleration(3,300);
-  mdL.setMaxDeceleration(3,300);
+
+  mdR.setMaxDeceleration(1,80);
+  mdL.setMaxDeceleration(1,80);
+  mdR.setMaxDeceleration(2,80);
+  mdL.setMaxDeceleration(2,80);
+  mdR.setMaxDeceleration(3,80);
+  mdL.setMaxDeceleration(3,80);
 
   move(0,0);
 }
@@ -433,6 +447,9 @@ void PID(float velocity) {
                               {-8,-6,-4,-2,0,2,4,6,8},
                               {-4,-3,-2,-1,0,1,2,3,4}};
 
+    double error_sides = 0.0;
+    double prev_error_sides = 0.0;
+
     Serial.print("QTR Left: ");
     Serial.print(qtr_left[0]);
     Serial.print(" ");
@@ -446,7 +463,7 @@ void PID(float velocity) {
     if ((!qtrs[0][3] && !qtrs[0][4] && !qtrs[0][5]) && ((qtr_left[0] || qtr_left[1]) && (qtr_right[0] || qtr_right[1]))){
       //turn left, then go forwards briefly
       Serial.println("Fork Detected!");
-      move(BASE_SPEED, -BASE_SPEED);
+      move(-100, 100);
       delay(500);
 
       return;
@@ -455,23 +472,43 @@ void PID(float velocity) {
       // delay(200);
     }
 
+    error_sides = 0;
 
-    //detecting right turn
-    if ((qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) && (qtr_right[0] || qtr_right[1])){
+
+    //detecting right turn (qtrs[0][6] || qtrs[0][7] || qtrs[0][8]) && 
+    if ((!qtr_right[0] || !qtr_right[1])){
       Serial.println("Right Turn Detected!");
 
+      // if (qtr_right[0]){
+      //   error_sides = error_sides - 5;
+      // }
+
+      // if (qtr_right[1]){
+      //   error_sides = error_sides - 5;
+      // }
+
       move(100, -100);
-      delay(500);
+
+      delay(200);
 
       return;
     }
 
-    //detecting left turn
-    if ((qtrs[0][1] || qtrs[0][2] || qtrs[0][3]) && (qtr_left[0] || qtr_left[1])){
+    //detecting left turn (qtrs[0][1] || qtrs[0][2] || qtrs[0][3]) &&
+    if ((!qtr_left[0] || !qtr_left[1])){
       Serial.println("Left Turn Detected!");
 
+      // if (qtr_left[0]){
+      //   error_sides = error_sides + 5;
+      // }
+
+      // if (qtr_left[1]){
+      //   error_sides = error_sides + 5;
+      // }
+
       move(-100, 100);
-      delay(500);
+
+      delay(200);
 
       return;
     }
@@ -502,31 +539,35 @@ void PID(float velocity) {
     }
 
     //derivative errors
-    float derivErrors[3][count];
+    double derivErrors[3][count];
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < count; ++j) {
         derivErrors[i][j] = (errors[i][j] - prevErrors[i][j])*10; //divide optimised at compile time
       }
     } 
 
+    double d_error_sides = error_sides - prev_error_sides;
+
     //"integral" errors
-    float integralErrors[3][count];
+    double integralErrors[3][count];
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < count; ++j) {
         integralErrors[i][j] = (errors[i][j] + prevErrors[i][j])*samplet; //divide optimised at compile time
       }
-    } 
+    }
+
+    i_error_sides = i_error_sides + error_sides;
 
     //total steering signal
-    float pe[3] = {sum(errors[0]),sum(errors[1]),sum(errors[2])};
-    float de[3] = {sum(derivErrors[0]),sum(derivErrors[1]),sum(derivErrors[2])};
-    float ie[3] = {sum(integralErrors[0]),sum(integralErrors[1]),sum(integralErrors[2])};
+    double pe[3] = {sum(errors[0]),sum(errors[1]),sum(errors[2])};
+    double de[3] = {sum(derivErrors[0]),sum(derivErrors[1]),sum(derivErrors[2])};
+    double ie[3] = {sum(integralErrors[0]),sum(integralErrors[1]),sum(integralErrors[2])};
 
-    float mpe = (pe[0] + pe[1] + pe[2])*invArrayCount;
-    float mde = (de[0] + de[1] + de[2])*invArrayCount;
-    float mie = (ie[0] + ie[1] + ie[2])*invArrayCount;
+    double mpe = (pe[0] + pe[1] + pe[2])*invArrayCount; //error_sides
+    double mde = (de[0] + de[1] + de[2])*invArrayCount; //d_error_sides
+    double mie = (ie[0] + ie[1] + ie[2])*invArrayCount; //i_error_sides
 
-    float dtheta = -kp*mpe - kd*mde + ki*mie;
+    double dtheta = -kp*mpe - kd*mde + ki*mie;
 
     // if (dtheta < 0.05f){
     //   dtheta = 0;
@@ -551,8 +592,8 @@ void PID(float velocity) {
     // Serial.print(phiR);
     // Serial.println();
 
-    int left = floor(BASE_SPEED - 10 - (float)(100 * dtheta));
-    int right = floor(BASE_SPEED - 10 + (float)(100 * dtheta));
+    int left = floor(BASE_SPEED - 10 - (double)(100 * dtheta));
+    int right = floor(BASE_SPEED - 10 + (double)(100 * dtheta));
 
     Serial.print("Motors: ");
     Serial.print(left);
@@ -569,7 +610,7 @@ void PID(float velocity) {
       }
     }
 
-    delay(100);
+    delay(200);
 }
 
 void readSendArrays(QTR* a) {
@@ -647,7 +688,7 @@ bool line_following(){
   qtrs[0].readBlackLine();
   qtrs[1].readBlackLine();
   qtrs[2].readBlackLine();
-  qtr_left.readBlackLine();
+  //qtr_left.readBlackLine();
   qtr_right.readBlackLine();
 
   for(int i = 0; i < 3; ++i) {
@@ -841,11 +882,11 @@ void raise_arm(){
 }
 
 void raise_lift() {
-  winch_servo.write(100);
+  winch_servo.write(0);
 }
 
 void lower_lift() {
-  winch_servo.write(0);
+  winch_servo.write(100);
 }
 
 void lock_hook() {
@@ -935,6 +976,9 @@ void setup(){
   hook_servo.attach(HOOK_PIN);
   latch_servo.attach(LATCH_PIN);
 
+  //lower_lift();
+  //lock_hook();
+
   Serial.println("Initialisation completed!");
 
   delay(100);
@@ -1001,6 +1045,25 @@ void loop(){
       break;
   }
 
+  // qtrs[0].readBlackLine();
+  // qtrs[1].readBlackLine();
+  // qtrs[2].readBlackLine();
+  // qtr_left.readBlackLine();
+  // qtr_right.readBlackLine();
+
+  // if (qtrs[0][0] && qtrs[0][1] && qtrs[0][2] && qtrs[0][3] && qtrs[0][4] && qtrs[0][5] && qtrs[0][6] && qtrs[0][7] && qtrs[0][8] && qtr_left[0] && qtr_left[1] && qtr_right[0] && qtr_right[1]){
+  //   delay(200);
+
+  //   if (qtrs[1][0] && qtrs[1][1] && qtrs[1][2] && qtrs[1][3] && qtrs[1][4] && qtrs[1][5] && qtrs[1][6] && qtrs[1][7] && qtrs[1][8]){
+  //     Serial.println("NEXT SECTION!");
+
+  //     finished = true;
+
+  //     move(100, 100);
+  //     delay(2000);
+  //   }
+  // }
+
   
 
   if (finished){
@@ -1016,6 +1079,14 @@ void loop(){
       }
 
     current_section = section_order[section_idx];
+
+    switch (current_section){
+      case LINE_FOLLOW:
+        Serial.println("---------- Line Following Section! ----------");
+
+      case WALL_FOLLOW:
+        Serial.println("---------- Wall Following Section! ----------");
+    }
 
     finished = false;
     }

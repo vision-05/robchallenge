@@ -38,7 +38,7 @@ enum Section{
     TESTING
 };
 
-const Section section_order[] = {Section::LINE_FOLLOW};
+const Section section_order[] = {Section::LINE_FOLLOW, Section::WALL_FOLLOW, Section::LINE_FOLLOW,};
 
 const int BASE_SPEED = 70; //base speed of robot as percentage
 
