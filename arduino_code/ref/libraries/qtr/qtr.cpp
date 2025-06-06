@@ -116,6 +116,10 @@ void QTR::calibrate(uint8_t times, Emitter e, Parity p) {
 		}
 	}
 
+	if(maxmax > this->maxtime) {
+		maxmax = this->maxtime;
+	}
+
 	for(int i = 0; i < this->count; ++i) {
 		this->calmax[i] = maxmax;
 		this->calmin[i] = minmin;
@@ -183,7 +187,14 @@ void QTR::readCalibrated() {
 	for(int i = 0; i < this->count; ++i) {
 		uint32_t invscale = this->calmax[i] - this->calmin[i];
 		this->readings[i] = this->readings[i]*100/invscale; //set to autocalibrate between 0 and 1024
-	}	
+		
+	}
+
+	if(this->count != 2) {
+		for(int i = 1; i < this->count -1; ++i) {
+			this->readings[i] = (this->readings[i-1] + this->readings[i] + this->readings[i+1])*0.333;
+		}
+	}
 }
 
 void QTR::readBlackLine() {
